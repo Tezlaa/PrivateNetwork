@@ -19,12 +19,14 @@ from django.urls import path, include
 from django.conf import settings
 from django.views.static import serve as mediaserve
 
+from config.schema import schema_urls
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
-    path('api/v1/', include('apps.routs')),
-]
+    
+    path('', include('apps.routs')),
+] + schema_urls
 
 if not settings.DEBUG:
     urlpatterns += [

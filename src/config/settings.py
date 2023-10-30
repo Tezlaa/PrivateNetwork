@@ -46,6 +46,7 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(', ')
 # Application definition
 
 INSTALLED_APPS = [
+    # packages
     'daphne',
     
     # django apps
@@ -57,11 +58,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     # packages
+    'drf_yasg',
     'channels',
+    'rest_framework',
     
     # apps
     'apps.chat',
     'apps.lobby',
+    'apps.account',
 ]
 
 MIDDLEWARE = [
