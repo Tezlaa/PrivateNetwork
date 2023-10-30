@@ -46,13 +46,22 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(', ')
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    
+    # django apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    
+    # packages
+    'channels',
+    
+    # apps
+    'apps.chat',
+    'apps.lobby',
 ]
 
 MIDDLEWARE = [
@@ -83,7 +92,23 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
+# WSGI_APPLICATION = 'config.wsgi.application'
+ASGI_APPLICATION = 'config.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [
+                (
+                    os.getenv('CHANNEL_REDIS_HOST', 'localhost'),
+                    os.getenv('CHANNEL_REDIS_PORT', 6379)
+                )
+            ]
+        }
+    }
+}
+
 
 DOCKER_RUN = os.getenv('DOCKER_RUN') == 'True'
 

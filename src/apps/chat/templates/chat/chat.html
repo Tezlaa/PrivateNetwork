@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Echo Chat</title>
+</head>
+<body>
+    <input id="chat-input" type="text" placeholder="Type a message">
+    <button id="chat-send">Send</button>
+    <ul id="chat-messages"></ul>
+
+    <script>
+        async function socket() {
+            const chatSocket = new WebSocket(
+                `ws://${window.location.host}/ws/chat/`
+            );
+            
+            console.log(`ws://${window.location.host}/ws/chat/`)
+
+            chatSocket.onmessage = function(e) {
+                const data = JSON.parse(e.data);
+                const message = data.text;
+                const chatMessages = document.getElementById('chat-messages');
+                chatMessages.innerHTML += '<li>' + message + '</li>';
+            };
+    
+            document.querySelector('#chat-send').onclick = function(e) {
+                const messageInputDom = document.querySelector('#chat-input');
+                const message = messageInputDom.value;
+                chatSocket.send(JSON.stringify({
+                    'text': message
+                }));
+                messageInputDom.value = '';
+            };
+        }
+        socket()
+    </script>
+</body>
+</html>
