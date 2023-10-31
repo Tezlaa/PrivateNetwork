@@ -1,0 +1,36 @@
+{% include 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+<main>
+    <div class="container px-4 text-center">
+        <div class="row gx-5">
+            <div class="col">
+                <div class="p-3">
+                    <table class="table" id="table-lobby">
+                        <thead>
+                          <tr>
+                            <th scope="col">Lobby name</th>
+                            <th scope="col">Users</th>
+                            <th scope="col"></th>
+                          </tr>
+                        </thead>
+                        <tbody id="lobby-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if user.is_authenticated %}
+      <script>getAllLobby()</script>
+      {% include 'includes/joinLobby.html' %}
+    {% else %}
+      {% include 'includes/logged_out.html' %}
+    {% endif %}
+
+</main>
+{% endblock content %}
+
+{% block scripts %} <script src="{% static 'js/script.js' %}"></script>{% endblock scripts %}

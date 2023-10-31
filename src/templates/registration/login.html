@@ -1,0 +1,30 @@
+{% include 'base.html' %}
+{% load static %}
+
+
+{% block contentblock %}
+<div class="mx-auto p-2 text-center" style="width: 70%; ">
+    <form method="post">
+        {% csrf_token %}
+        {% if form.errors %}
+            <p>Username or password not correct</p>
+        {% endif %}
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Username</label>
+            {{form.username.errors}}
+            <div style="width: 100%;">
+                {{form.username}}
+            </div>
+            <div class="mb-3">
+        </div>
+            <label for="exampleInputPassword1" class="form-label">Password</label>
+            {{form.password.errors}}
+            <div style="width: 100%;">
+                {{form.password}}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+</div>
+{% endblock contentblock %}
+    
