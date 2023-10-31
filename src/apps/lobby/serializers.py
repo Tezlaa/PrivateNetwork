@@ -19,7 +19,18 @@ class LobbySerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True},
         }
-        
+
+
+class LobbySerializerOnlyNames(serializers.ModelSerializer):
+    user_connected = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Lobby
+        fields = ('lobby_name', 'user_connected')
+    
+    def get_user_connected(self, obj) -> int:
+        return obj.user_connected.count()
+
 
 class LobbyJoinSerializer(serializers.Serializer):
     password = serializers.IntegerField()

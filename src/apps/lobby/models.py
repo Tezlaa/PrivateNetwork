@@ -16,7 +16,8 @@ class Lobby(models.Model):
                                              validators=[MinValueValidator(1)])
     user_connected = models.ManyToManyField(to=User,
                                             verbose_name='User connected',
-                                            related_name='user_connected')
+                                            related_name='user_connected',
+                                            blank=True)
     chat = models.ManyToManyField(to=Message, related_name='messages', blank=True)
     
     class Meta:
