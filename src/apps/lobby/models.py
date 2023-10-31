@@ -1,16 +1,21 @@
 from django.db import models
+from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
 
 from apps.chat.models import Message
 
+from apps.base.validations import validate_password
+
 
 class Lobby(models.Model):
     lobby_name = models.CharField(verbose_name='Lobby name', max_length=50, unique=True)
-    owner = models.ForeignKey(to=User, on_delete=models.CASCADE, verbose_name='Lobby owner')
-    password = models.IntegerField(verbose_name='Password')
-    user_limit = models.IntegerField(verbose_name='User limit', default=2)
+    owners = models.ManyToManyField(to=User, verbose_name='Lobby owners', blank=True)
+    password = models.PositiveIntegerField(verbose_name='Password', default=1111,
+                                           validators=[validate_password])
+    user_limit = models.PositiveIntegerField(verbose_name='User limit', default=2,
+                                             validators=[MinValueValidator(1)])
     user_connected = models.ManyToManyField(to=User,
-                                            verbose_name='User connected', 
+                                            verbose_name='User connected',
                                             related_name='user_connected')
     chat = models.ManyToManyField(to=Message, related_name='messages', blank=True)
     

@@ -1,6 +1,9 @@
+# vscode
+.vscode
+
 # Migrate files
-migrations/*
-!migrations/__init__.py
+src/apps/*/migrations/*
+!src/apps/*/migrations/__init__.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
