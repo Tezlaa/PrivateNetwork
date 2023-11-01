@@ -1,11 +1,12 @@
 from typing import Optional
 
-from django.db.models import QuerySet
+from django.db.models import QuerySet, OuterRef, Exists
 from django.contrib.auth.models import User
 
 from apps.lobby.models import Lobby
 
-from apps.base.exceptions import OwnerError, UserLimitError, LobbyNotFound, api_validation_error
+from apps.base.exceptions import OwnerError, UserLimitError, LobbyNotFound
+from apps.base.decorators import api_validation_error, banchmark_queries
 
 
 def is_user_owner(user: User, lobby: Lobby) -> bool:
@@ -13,7 +14,9 @@ def is_user_owner(user: User, lobby: Lobby) -> bool:
 
 
 def get_user_lobbies(user: User) -> QuerySet[Lobby]:
-    return Lobby.objects.filter(user_connected__in=[user])
+    return Lobby.objects.filter(user_connected__in=[user]).annotate(
+        owner=Exists(User.objects.filter(pk=OuterRef('owners__pk'), username=user.username))
+    )
 
 
 @api_validation_error
@@ -59,7 +62,7 @@ def get_lobby(lobby_name: str,
         filters['user_connected__in'] = [user]  # type: ignore
         
     lobby = Lobby.objects.filter(**filters).first()
-    
+        
     if lobby is None:
         raise LobbyNotFound(lobby_name)
     
