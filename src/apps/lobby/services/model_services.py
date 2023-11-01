@@ -5,7 +5,11 @@ from django.contrib.auth.models import User
 
 from apps.lobby.models import Lobby
 
-from apps.base.exceptions import UserLimitError, LobbyNotFound, api_validation_error
+from apps.base.exceptions import OwnerError, UserLimitError, LobbyNotFound, api_validation_error
+
+
+def is_user_owner(user: User, lobby: Lobby) -> bool:
+    return lobby.owners.filter(username=user.username).exists()
 
 
 def get_user_lobbies(user: User) -> QuerySet[Lobby]:
@@ -13,7 +17,7 @@ def get_user_lobbies(user: User) -> QuerySet[Lobby]:
 
 
 @api_validation_error
-def add_user_to_lobby(user, lobby: Lobby) -> Lobby:
+def add_user_to_lobby(user: User, lobby: Lobby) -> Lobby:
     user_limit = lobby.user_limit
     
     if user_limit < lobby.user_connected.count() + 1:
@@ -23,15 +27,25 @@ def add_user_to_lobby(user, lobby: Lobby) -> Lobby:
     return lobby
 
 
-def remove_user_from_lobby(user, lobby: Lobby) -> None:
+def remove_user_from_lobby(user: User, lobby: Lobby) -> None:
     user_exists_in_lobby = lobby.user_connected.filter(username=user.username).exists()
-    user_owner = lobby.owners.filter(username=user.username).exists()
+    user_owner = is_user_owner(user, lobby)
     
     if user_exists_in_lobby:
         lobby.user_connected.remove(user)
     if user_owner:
         lobby.owners.remove(user)
 
+
+@api_validation_error
+def delete_lobby(user: User, lobby_name: str) -> None:
+    lobby = get_lobby(lobby_name=lobby_name, user=user)
+    
+    if not is_user_owner(user, lobby):
+        raise OwnerError
+
+    lobby.delete()
+    
 
 @api_validation_error
 def get_lobby(lobby_name: str,

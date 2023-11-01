@@ -12,7 +12,7 @@ from apps.lobby.serializers import (
 )
 from apps.lobby.services.model_services import (
     get_lobby, get_user_lobbies, add_user_to_lobby, create_lobby, remove_user_from_lobby,
-    
+    delete_lobby,
 )
 
 
@@ -43,7 +43,6 @@ class GetLobbiesNames(GetLobbies):
 
 
 class CreateLobby(LobbyGenericAPIView):
-     
     def post(self, request):
         """ Create lobby. """
         
@@ -53,6 +52,15 @@ class CreateLobby(LobbyGenericAPIView):
         
         return Response(self.serialize_instance_to_dict(lobby),
                         status=status.HTTP_201_CREATED)
+
+
+class DeleteLobby(LobbyGenericAPIView):
+    def delete(self, request, lobby_name: str):
+        """ Delete lobby. """
+
+        delete_lobby(user=request.user, lobby_name=lobby_name)
+        
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ConnectDisconnectFromLobby(LobbyGenericAPIView):

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from apps.chat.models import Message
+
 from apps.account.serializers import UserSerializer
 
 
