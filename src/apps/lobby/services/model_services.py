@@ -69,6 +69,7 @@ def get_lobby(lobby_name: str,
     return lobby
 
 
+@api_validation_error
 def create_lobby(valid_serializer, user) -> Lobby:
     
     lobby = valid_serializer.save()

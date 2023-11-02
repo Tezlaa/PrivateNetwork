@@ -14,8 +14,8 @@ urlpatterns = [
     path(API_PREFIX_V1 + 'all/', GetLobbies.as_view()),
     path(API_PREFIX_V1 + 'allNames/', GetLobbiesNames.as_view()),
     path(API_PREFIX_V1 + 'create/', CreateLobby.as_view()),
-    path(API_PREFIX_V1 + 'action/<str:lobby_name>/', ConnectDisconnectFromLobby.as_view()),
-    path(API_PREFIX_V1 + 'delete/<str:lobby_name>/', DeleteLobby.as_view()),
+    path(API_PREFIX_V1 + 'action/<str:lobby_name>', ConnectDisconnectFromLobby.as_view()),
+    path(API_PREFIX_V1 + 'delete/<str:lobby_name>', DeleteLobby.as_view()),
     
     path('', LobbyMenu.as_view(), name='menu')
 ]

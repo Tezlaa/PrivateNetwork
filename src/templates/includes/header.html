@@ -21,9 +21,9 @@
                 {% endif %}
             </ul>
             <form class="d-flex" role="search" autocomplete="off">
-              <input class="form-control me-2" type="login" placeholder="Lobby name" aria-label="Search" autocomplete="off">
-              <input class="form-control me-2" type="password" placeholder="Password" aria-label="Search" autocomplete="off">
-              <button class="btn btn-outline-success" type="submit">Search</button>
+              <input id="lobby-name" class="form-control me-2" type="login" placeholder="Lobby name" aria-label="Search" autocomplete="off">
+              <input id="lobby-password" class="form-control me-2" type="number" placeholder="Password" aria-label="Search" autocomplete="off">
+              <button class="btn btn-outline-primary" type="button" onclick="joinLobby()">Join</button>
             </form>
           </div>
         </div>

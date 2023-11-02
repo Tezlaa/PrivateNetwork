@@ -42,6 +42,7 @@ class GetLobbiesNames(GetLobbies):
     serializer_class = LobbySerializerOnlyNames
 
 
+# TODO: Fix issue with exception on the front-end
 class CreateLobby(LobbyGenericAPIView):
     def post(self, request):
         """ Create lobby. """

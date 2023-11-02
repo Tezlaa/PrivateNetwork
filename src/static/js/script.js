@@ -1,5 +1,5 @@
 function getAllLobby() {
-    const request = new Request(getBaseUrl() + '/lobby/api/v1/allNames/')
+    const request = new Request(getBaseUrlLobbyAPI() + 'allNames/')
 
     apiRequest(request).then(json => {
         showLobby(json)
@@ -16,10 +16,9 @@ function joinLobby(){
     var lobbyName = document.getElementById('lobby-name').value
     var lobbyPass = document.getElementById('lobby-password').value
 
-    const request = new Request(getBaseUrl() + 'lobby/join/');
+    const request = new Request(getBaseUrlLobbyAPI() + 'action/' + lobbyName);
     
     var postData = {
-        "lobby_name": lobbyName,
         "password": lobbyPass
     }
 
@@ -34,6 +33,34 @@ function joinLobby(){
 
     apiRequestPost(request, data).then(json => {
         console.log(json);
+        document.location.reload();
+    })
+}
+
+function createLobby(){
+    var lobbyName = document.getElementById('lobby-name-create').value
+    var lobbyPass = parseInt(document.getElementById('lobby-password-create').value)
+    var lobbyLimit = document.getElementById('user-limit-create').value
+
+    const request = new Request(getBaseUrlLobbyAPI() + 'create/');
+    
+    var postData = {
+        "lobby_name": lobbyName,
+        "password": lobbyPass,
+        "user_limit": lobbyLimit
+    }
+
+    var data = {
+        method: "POST",
+        body: JSON.stringify(postData),
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken(),
+        }
+    }
+
+    apiRequestPost(request, data).then(response => {
+        console.log(response);
         // document.location.reload();
     })
 }
@@ -81,8 +108,9 @@ function sendMessage() {
         }
     }
 
-    apiRequestPost(request, data).then(json => {
-        document.location.reload();
+    apiRequestPost(request, data).then(response => {
+        console.log(response);
+        // document.location.reload();
     })
 }
 
@@ -92,7 +120,7 @@ function resetMessageArea() {
 
 function exitFromLobby(event) {
     var lobbyName = event.target.id.split('exit-')[1];
-    const request = new Request(getBaseUrl() + 'lobby/exit/' + lobbyName + '/');
+    const request = new Request(getBaseUrlLobbyAPI() + 'action/' + lobbyName);
 
     var data = {
         method: "DELETE",
@@ -102,7 +130,7 @@ function exitFromLobby(event) {
         }
     }
 
-    apiRequestPost(request, data).then(json => {
+    apiRequestDelete(request, data).then(status => {
         document.location.reload();
     })
 }
@@ -197,11 +225,16 @@ function apiRequest(request) {
 
 function apiRequestPost(request, data) {
     return fetch(request, data)
-        .then(response => response.json());
+        .then(response => JSON.stringify({"json": response.json(), "status": response.status}))
 }
 
-function getBaseUrl(){
-    return window.location.origin
+function apiRequestDelete(request, data) {
+    return fetch(request, data)
+        .then(response => response.status);
+}
+
+function getBaseUrlLobbyAPI(){
+    return window.location.origin + '/lobby/api/v1/'
 }
 
 function getCSRFToken() {

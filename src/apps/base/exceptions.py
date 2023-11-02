@@ -1,3 +1,5 @@
+# TODO: Rewrite to rest_framework.exception.APIException
+
 class UserLimitError(Exception):
     def __init__(self, limit: int) -> None:
         super().__init__(f'Out of limit in {limit} user!')
