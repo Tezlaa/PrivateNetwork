@@ -31,9 +31,13 @@ function joinLobby(){
         }
     }
 
-    apiRequestPost(request, data).then(json => {
-        console.log(json);
-        document.location.reload();
+    apiRequestPost(request, data).then(response => {
+        console.log(response);
+        if (response.status != 201){
+            alert_bootstrap(response.json, 'warning', 'global_alert')
+        } else{
+            document.location.reload();
+        };
     })
 }
 
@@ -60,8 +64,21 @@ function createLobby(){
     }
 
     apiRequestPost(request, data).then(response => {
-        console.log(response);
-        // document.location.reload();
+        if (response.status != 201){
+            json = response.json
+            if (json.hasOwnProperty('password')) {
+                alert_bootstrap(json['password'], 'danger', 'password_alert')
+            }
+            if (json.hasOwnProperty('lobby_name')) {
+                alert_bootstrap(json['lobby_name'], 'danger', 'lobby_name_alert')
+            }
+            if (json.hasOwnProperty('user_limit')) {
+                alert_bootstrap(json['user_limit'], 'danger', 'user_limit_alert')
+            }
+        } else {
+            document.location.reload()
+        }
+
     })
 }
 
@@ -225,7 +242,10 @@ function apiRequest(request) {
 
 function apiRequestPost(request, data) {
     return fetch(request, data)
-        .then(response => JSON.stringify({"json": response.json(), "status": response.status}))
+        .then(response => {
+            return response.json()
+                .then(json => ({ json, status: response.status, response }));
+        });
 }
 
 function apiRequestDelete(request, data) {
@@ -249,4 +269,18 @@ function getCSRFToken() {
 		}
 	}
 	return cookieValue;
+}
+
+function alert_bootstrap(message, type, elementId) {
+    const alertPlaceholder = document.getElementById(elementId)
+
+    const wrapper = document.createElement('div')
+    wrapper.innerHTML = [
+      `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+      `   <div>${message}</div>`,
+      '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+      '</div>'
+    ].join('')
+
+    alertPlaceholder.append(wrapper)
 }

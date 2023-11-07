@@ -42,7 +42,6 @@ class GetLobbiesNames(GetLobbies):
     serializer_class = LobbySerializerOnlyNames
 
 
-# TODO: Fix issue with exception on the front-end
 class CreateLobby(LobbyGenericAPIView):
     def post(self, request):
         """ Create lobby. """
@@ -79,7 +78,7 @@ class ConnectDisconnectFromLobby(LobbyGenericAPIView):
         add_user_to_lobby(user, lobby)
         
         return Response(self.serialize_instance_to_dict(lobby),
-                        status=status.HTTP_202_ACCEPTED)
+                        status=status.HTTP_201_CREATED)
         
     def delete(self, request, lobby_name: str):
         """ Disconnect from lobby. """
