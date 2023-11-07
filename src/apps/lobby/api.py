@@ -36,7 +36,15 @@ class GetLobbies(LobbyGenericAPIView):
         serializer_data = self.get_serializer(instance=user_lobby, many=True).data
         return Response(serializer_data,
                         status=status.HTTP_200_OK)
+        
 
+class GetLobby(LobbyGenericAPIView):
+    def get(self, request, lobby_name: str):
+        """ Get lobby by his name """
+        lobby = get_lobby(lobby_name, user=request.user)
+        return Response(self.serialize_instance_to_dict(lobby),
+                        status=status.HTTP_200_OK)
+        
 
 class GetLobbiesNames(GetLobbies):
     serializer_class = LobbySerializerOnlyNames

@@ -1,0 +1,18 @@
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
+
+from apps.chat.models import Message
+from apps.lobby.models import Lobby
+
+
+def send_message(lobby: Lobby, message: str, username) -> Message:
+    user = get_object_or_404(User, username=username)
+    message_inctance = Message.objects.create(
+        user=user,
+        message=message
+    )
+    
+    lobby.chat.add(message_inctance)
+    lobby.save()
+    
+    return message_inctance

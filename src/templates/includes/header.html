@@ -9,6 +9,9 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 {% if user.is_authenticated %}
                 <li class="nav-item">
+                  <a class="nav-link active" style="color: #0d6efd;" aria-current="page" href="{% url 'menu' %}">{{user.username}}</a>
+                </li>
+                <li class="nav-item">
                   <a class="nav-link active" aria-current="page" href="{% url 'logout' %}">Logout</a>
                 </li>
                 {% else %}

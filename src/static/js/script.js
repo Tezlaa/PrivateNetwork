@@ -2,7 +2,7 @@ function getAllLobby() {
     const request = new Request(getBaseUrlLobbyAPI() + 'allNames/')
 
     apiRequest(request).then(json => {
-        showLobby(json)
+        showLobbies(json)
     })
 }
 
@@ -36,7 +36,7 @@ function joinLobby(){
         if (response.status != 201){
             alert_bootstrap(response.json, 'warning', 'global_alert')
         } else{
-            document.location.reload();
+            document.location.reload()
         };
     })
 }
@@ -104,37 +104,6 @@ async function updateChat() {
     })
 }
 
-function sendMessage() {
-    var message = document.getElementById('floatingTextarea').value;
-    if (message.length < 1) {
-        return
-    } 
-    const request = new Request(getBaseUrl() + 'chat/send/');
-    
-    var postData = {
-        "lobby_name": getLobbyName(),
-        "message": message,
-    }
-
-    var data = {
-        method: "POST",
-        body: JSON.stringify(postData),
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCSRFToken(),
-        }
-    }
-
-    apiRequestPost(request, data).then(response => {
-        console.log(response);
-        // document.location.reload();
-    })
-}
-
-function resetMessageArea() {
-    document.getElementById('floatingTextarea').value = ''
-}
-
 function exitFromLobby(event) {
     var lobbyName = event.target.id.split('exit-')[1];
     const request = new Request(getBaseUrlLobbyAPI() + 'action/' + lobbyName);
@@ -152,56 +121,58 @@ function exitFromLobby(event) {
     })
 }
 
-function showLobby(json) {
+function showLobby(json_lobby){
+    var tbody = document.getElementById('lobby-tbody')
+    var lobbyName = document.createElement('td')
+    var connectedUser = document.createElement('td')
+    var open = document.createElement('td')
+    var action = document.createElement('td')
+    var tr = document.createElement('tr')
+    
+    var joinButton = document.createElement('a')
+    var exitButton = document.createElement('div')
+    var deleteButton = document.createElement('div')
+
+    connectedUser.textContent = json_lobby['user_connected']
+    lobbyName.textContent = json_lobby['lobby_name']
+
+    joinButton.type = "button"
+    joinButton.className = "btn btn-outline-success"
+    joinButton.textContent = 'Join'
+    joinButton.href = "/chat/" + json_lobby['lobby_name'] + "/"
+    joinButton.style = "--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+
+    exitButton.title = "button"
+    exitButton.className = "btn btn-outline-warning"
+    exitButton.textContent = 'Exit'
+    exitButton.id = 'exit-' + json_lobby['lobby_name']
+    exitButton.onclick = exitFromLobby
+    exitButton.style = "--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin-right: 7px"
+
+    deleteButton.title = "button"
+    deleteButton.className = "btn btn-outline-danger"
+    deleteButton.textContent = 'Delete'
+    deleteButton.id = 'exit-' + json_lobby['lobby_name']
+    deleteButton.onclick = exitFromLobby
+    deleteButton.style = "--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin-right: 7px"
+
+    if (json_lobby['owner']){
+        action.appendChild(deleteButton)
+    }
+
+    open.appendChild(exitButton)
+    open.appendChild(joinButton)
+
+    tr.appendChild(lobbyName)
+    tr.appendChild(connectedUser)
+    tr.appendChild(action)
+    tr.appendChild(open)
+    tbody.appendChild(tr)
+}
+
+function showLobbies(json) {
     for (let index = 0; index < json.length; index++) {
-        const lobby = json[index];
-        
-        var tbody = document.getElementById('lobby-tbody')
-        var lobbyName = document.createElement('td')
-        var connectedUser = document.createElement('td')
-        var open = document.createElement('td')
-        var action = document.createElement('td')
-        var tr = document.createElement('tr')
-        
-        var joinButton = document.createElement('a')
-        var exitButton = document.createElement('div')
-        var deleteButton = document.createElement('div')
-
-        connectedUser.textContent = lobby['user_connected']
-        lobbyName.textContent = lobby['lobby_name']
-
-        joinButton.type = "button"
-        joinButton.className = "btn btn-outline-success"
-        joinButton.textContent = 'Join'
-        joinButton.href = "/chat/?lobby=" + lobby['lobby_name']
-        joinButton.style = "--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-
-        exitButton.title = "button"
-        exitButton.className = "btn btn-outline-warning"
-        exitButton.textContent = 'Exit'
-        exitButton.id = 'exit-' + lobby['lobby_name']
-        exitButton.onclick = exitFromLobby
-        exitButton.style = "--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin-right: 7px"
-
-        deleteButton.title = "button"
-        deleteButton.className = "btn btn-outline-danger"
-        deleteButton.textContent = 'Delete'
-        deleteButton.id = 'exit-' + lobby['lobby_name']
-        deleteButton.onclick = exitFromLobby
-        deleteButton.style = "--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin-right: 7px"
-
-        if (lobby['owner']){
-            action.appendChild(deleteButton)
-        }
-
-        open.appendChild(exitButton)
-        open.appendChild(joinButton)
-
-        tr.appendChild(lobbyName)
-        tr.appendChild(connectedUser)
-        tr.appendChild(action)
-        tr.appendChild(open)
-        tbody.appendChild(tr)
+        showLobby(json[index]);
     }
 }
 
