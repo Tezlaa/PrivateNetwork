@@ -122,24 +122,24 @@ DOCKER_RUN = os.getenv('DOCKER_RUN') == 'True'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 # PostgreSQL
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": os.getenv('POSTGRES_NAME'),
-#         "USER": os.getenv('POSTGRES_USER'),
-#         "PASSWORD": os.getenv('POSTGRES_PASSWORD'),
-#         "HOST": os.getenv('POSTGRES_HOST') if DOCKER_RUN else 'localhost',
-#         "PORT": os.getenv('POSTGRES_PORT'),
-#     }
-# }
-
-# SQlite
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": os.getenv('POSTGRES_DB'),
+        "USER": os.getenv('POSTGRES_USER'),
+        "PASSWORD": os.getenv('POSTGRES_PASSWORD'),
+        "HOST": os.getenv('POSTGRES_HOST') if DOCKER_RUN else 'localhost',
+        "PORT": os.getenv('POSTGRES_PORT'),
     }
 }
+
+# SQlite
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation

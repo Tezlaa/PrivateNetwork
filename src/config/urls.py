@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.views.static import serve as mediaserve
+from django.conf.urls.static import static
+
 
 from config.schema import schema_urls
 
@@ -26,7 +28,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     
     path('', include('apps.routs')),
-] + schema_urls
+] + schema_urls + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if not settings.DEBUG:
     urlpatterns += [

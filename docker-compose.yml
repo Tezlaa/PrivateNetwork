@@ -1,0 +1,39 @@
+services:
+  database:
+    image: postgres
+    volumes:
+      - database:/var/lib/postgresql/data
+    env_file:
+      - .env
+    restart: always
+  
+  web-app:
+    build:
+      context: .
+    env_file:
+     - .env
+    depends_on:
+      - database
+      - redis
+    links:
+      - redis
+    command: >
+      sh -c "python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             daphne -b 0.0.0.0 -p 8000 config.asgi:application"
+    ports:
+      - "8000:8000"
+    restart: always
+
+  redis:
+    image: redis:latest
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "6379:${CHANNEL_REDIS_PORT}"
+
+
+volumes:
+  database:
