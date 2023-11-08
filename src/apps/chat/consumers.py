@@ -13,8 +13,8 @@ from apps.lobby.services.model_services import get_lobby
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.lobby_name = self.scope['url_route']['kwargs'].get('lobby_name')
-        self.lobby_group_name = f'lobby_{self.lobby_name}'
+        self.lobby_name: str = self.scope['url_route']['kwargs'].get('lobby_name', '')
+        self.lobby_group_name = f'lobby_{self.lobby_name.replace(" ", "_")}'
         self.lobby = await sync_to_async(get_lobby)(lobby_name=self.lobby_name)
         
         await self.channel_layer.group_add(self.lobby_group_name, self.channel_name)
@@ -29,7 +29,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         recieve_type = text_data_json.get('type')
         message = text_data_json.get('message')
         name = text_data_json.get('name')
-        print('Receive data: ', text_data_json)
         
         if recieve_type == 'message':
             new_message = await sync_to_async(send_message)(self.lobby, message, name)
@@ -53,4 +52,3 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'timestamp': event.get('timestamp')
             })
         )
-    

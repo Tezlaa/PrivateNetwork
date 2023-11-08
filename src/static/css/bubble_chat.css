@@ -28,7 +28,7 @@
     font-weight: 600;
     font-size: 12px;
     margin: 0 0 4px;
-    color: #3498db;
+    color: #34a3db;
 }
 
 .speech-wrapper .bubble .txt .name span {
@@ -37,7 +37,7 @@
 }
 
 .speech-wrapper .bubble .txt .name.alt {
-    color: #2ecc71;
+    color: #46cc2e;
 }
 
 .speech-wrapper .bubble .txt .message {

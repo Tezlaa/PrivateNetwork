@@ -82,27 +82,31 @@ function createLobby(){
     })
 }
 
-const loadChat = async () => {
-    await updateChat();
-    await setInterval(updateChat, 10000);
-}
-
-async function updateChat() {
-    var from_id = 0
-    try {
-        from_id = parseInt(
-            document.getElementById('chat-block').lastElementChild.getAttribute('message-id')
-        );
-    } catch (error) {}
-
-    var lobbyName = await getLobbyName();
-
-    const request = await new Request(getBaseUrl() + 'chat/all/' + lobbyName + '/?from_id=' + from_id)
-
-    await apiRequest(request).then(json => {
-        showChat(json[0])
+function loadMessagesFromAPI() {
+    var lobbyName = document.location.pathname.split('/chat/')[1].slice(0, -1);
+    
+    const request = new Request(getBaseUrlLobbyAPI() + 'getLobby/' + lobbyName)
+    apiRequest(request).then(response => {
+        response.messages.forEach(message => {
+            createBubble(
+                message.user.username,
+                message.message,
+                new Date(message.created_at),
+                (message.user.username === username)
+            )
+            
+        });
+    }).then(function() {
+        scrollToLastMessage()
     })
 }
+
+function scrollToLastMessage() {
+    var bubbles = document.getElementsByClassName('bubble');
+    var lastBubble = bubbles.item(bubbles.length - 1);
+    lastBubble.scrollIntoView({behavior: 'smooth'})
+}
+
 
 function exitFromLobby(event) {
     var lobbyName = event.target.id.split('exit-')[1];

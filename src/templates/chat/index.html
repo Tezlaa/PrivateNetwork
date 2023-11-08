@@ -6,43 +6,7 @@
 {% block content %}
 
 <div class="speech-wrapper">
-    <div class="container px-5" id="speech">
-        <div class="bubble">
-            <div class="txt">
-                <p class="name">Benni</p>
-                <p class="message">Hey, check out this Pure CSS speech bubble...</p>
-                <span class="timestamp">10:20 pm</span>
-            </div>
-        </div>
-        <div class="bubble alt">
-            <div class="txt">
-                <p class="name alt">+353 87 1234 567<span> ~ John</span></p>
-                <p class="message">Nice... this will work great for my new project.</p>
-                <span class="timestamp">10:22 pm</span>
-            </div>
-        </div>
-        <div class="bubble alt">
-            <div class="txt">
-                <p class="name alt">+353 87 1234 567<span> ~ John</span></p>
-                <p class="message">Nice... this will work great for my new project435344354534533333333333333333333333333.</p>
-                <span class="timestamp">10:22 pm</span>
-            </div>
-        </div>
-        <div class="bubble">
-            <div class="txt">
-                <p class="name">Benni</p>
-                <p class="message">Hey, check out this Pure CSS speech bubble...</p>
-                <span class="timestamp">10:20 pm</span>
-            </div>
-        </div>
-        <div class="bubble">
-            <div class="txt">
-                <p class="name">Benni</p>
-                <p class="message">Hey, check out this Pure CSS speech bubble...</p>
-                <span class="timestamp">10:20 pm</span>
-            </div>
-        </div>
-    </div>
+    <div class="container px-5" id="speech"></div>
 </div>
 <div class="mx-auto p-2 text-right" style="width: 50%; ">
     <div class="form-floating">
@@ -58,7 +22,9 @@
 
 
 {% block scripts %}
-<script src="{% static 'js/websockets.js' %}"></script>
-<script>startSocket()</script>
+<script>
+loadMessagesFromAPI()
+startSocket()
+</script>
 {% endblock scripts %}
     

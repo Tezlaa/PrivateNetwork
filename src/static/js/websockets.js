@@ -21,9 +21,9 @@ function onMessage(data) {
 
     if (data.type === 'chat_message') {
         if (data.name !== username) {
-            createBubble(data.name, data.message, data.timestamp, false)
+            createBubble(data.name, data.message, new Date(data.timestamp * 1000), false)
         }else {
-            createBubble(data.name, data.message, data.timestamp)
+            createBubble(data.name, data.message, new Date(data.timestamp * 1000))
         }
     }
 }
@@ -46,26 +46,25 @@ function resetMessageArea() {
     document.getElementById('floatingTextarea').value = ''
 }
 
-function createBubble(name, message, timestamp, alt=true) {
+function createBubble(name, message, date, alt=true) {
     const outerDiv = document.createElement('div');
+    const nameParagraph = document.createElement('p');
     if (alt) {
         outerDiv.className = 'bubble alt';
+        nameParagraph.className = 'name alt';
     }else {
         outerDiv.className = 'bubble';
+        nameParagraph.className = 'name';
     }
+    nameParagraph.textContent = name;
 
     const innerDiv = document.createElement('div');
     innerDiv.className = 'txt';
-
-    const nameParagraph = document.createElement('p');
-    nameParagraph.className = 'name alt';
-    nameParagraph.textContent = name;
 
     const messageParagraph = document.createElement('p');
     messageParagraph.className = 'message';
     messageParagraph.textContent = message;
 
-    var date = new Date(timestamp * 1000)
     const timestampSpan = document.createElement('span');
     timestampSpan.className = 'timestamp';
     timestampSpan.textContent = `${date.toDateString()} - ${date.toLocaleTimeString()}`;
