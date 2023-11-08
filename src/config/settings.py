@@ -191,5 +191,5 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-LOGIN_REDIRECT_URL = reverse_lazy('menu')
+LOGIN_REDIRECT_URL = reverse_lazy('lobbies')
 LOGOUT_REDIRECT_URL = reverse_lazy('logout')

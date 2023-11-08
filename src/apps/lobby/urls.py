@@ -18,5 +18,5 @@ urlpatterns = [
     path(API_PREFIX_V1 + 'action/<str:lobby_name>', ConnectDisconnectFromLobby.as_view()),
     path(API_PREFIX_V1 + 'delete/<str:lobby_name>', DeleteLobby.as_view()),
     
-    path('', LobbyMenu.as_view(), name='menu')
+    path('', LobbyMenu.as_view(), name='lobbies')
 ]

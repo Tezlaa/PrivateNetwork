@@ -17,12 +17,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.lobby_group_name = f'lobby_{self.lobby_name.replace(" ", "_")}'
         self.lobby = await sync_to_async(get_lobby)(lobby_name=self.lobby_name)
         
-        await self.channel_layer.group_add(self.lobby_group_name, self.channel_name)
+        await self.channel_layer.group_add(self.lobby_group_name, self.channel_name)  # type: ignore
         
         await self.accept()
     
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.lobby_group_name, self.channel_name)
+        await self.channel_layer.group_discard(self.lobby_group_name, self.channel_name)  # type: ignore
         
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
@@ -34,7 +34,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             new_message = await sync_to_async(send_message)(self.lobby, message, name)
             timestamp = int(round(new_message.created_at.timestamp()))
             
-            await self.channel_layer.group_send(
+            await self.channel_layer.group_send(  # type: ignore
                 self.lobby_group_name, {
                     'type': 'chat_message',
                     'message': message,
