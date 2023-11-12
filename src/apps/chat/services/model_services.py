@@ -18,10 +18,16 @@ def send_message(lobby: Lobby, message: str, username: str) -> Message:
     return message_inctance
 
 
-# TODO: query optimization
-def create_like_for_message(lobby: Lobby, message_pk: int, username: str) -> None:
+def like_for_message(lobby: Lobby, message_pk: int, username: str, create: bool = True) -> None:
     user = get_object_or_404(User, username=username)
-    message = lobby.chat.filter(pk=message_pk).first()
-    if message is not None:
+    message = get_object_or_404(lobby.chat, pk=message_pk)
+
+    if create:
         message.user_liked.add(user)
-        message.save()
+    else:
+        message.user_liked.remove(user)
+        
+    message.save()
+
+
+

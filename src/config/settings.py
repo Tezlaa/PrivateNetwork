@@ -101,13 +101,15 @@ TEMPLATES = [
 # WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
+DOCKER_RUN = os.getenv('DOCKER_RUN') == 'True'
+
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             'hosts': [
                 (
-                    os.getenv('CHANNEL_REDIS_HOST', 'localhost'),
+                    os.getenv('CHANNEL_REDIS_HOST', 'localhost') if DOCKER_RUN else 'localhost',
                     os.getenv('CHANNEL_REDIS_PORT', 6379)
                 )
             ]
@@ -115,8 +117,6 @@ CHANNEL_LAYERS = {
     }
 }
 
-
-DOCKER_RUN = os.getenv('DOCKER_RUN') == 'True'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

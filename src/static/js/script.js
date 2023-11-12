@@ -92,9 +92,10 @@ function loadMessagesFromAPI() {
                 message.user.username,
                 message.message,
                 new Date(message.created_at),
+                message.id,
                 (message.user.username === username)
             )
-            
+            createLikeForBubble(message.user_liked, message.id)
         });
     }).then(function() {
         scrollToLastMessage()

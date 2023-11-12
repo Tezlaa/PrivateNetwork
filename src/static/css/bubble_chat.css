@@ -54,3 +54,25 @@
     text-transform: uppercase;
     color: #999;
 }
+
+
+
+/* Liked message style START*/
+.likes {
+    display: flex;
+    left: -19px;
+    top: -9px;
+    position: relative;
+    justify-content: flex-end;
+}
+
+.like {
+    width: 15px;
+    margin-bottom: 1px;
+}
+
+.number-likes {
+    font-weight: 700;
+    font-size: 12px;
+}
+/* Liked message style END*/
