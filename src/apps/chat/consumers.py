@@ -51,9 +51,9 @@ class ChatConsumer(ChatConsumerBase):
         new_message = await sync_to_async(send_message)(self.lobby, fields['message'], fields['username'])
         
         await self._sendint_to_group(group_name=self.lobby_group_name, send_type='chat_message', sending_data={
-            **fields,
             'timestamp': int(round(new_message.created_at.timestamp())),
             'message_id': new_message.pk,
+            **fields,
         })
 
     async def receive_delete_like(self, fields: dict[str, Any]) -> None:

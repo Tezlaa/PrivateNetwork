@@ -28,6 +28,3 @@ def like_for_message(lobby: Lobby, message_pk: int, username: str, create: bool 
         message.user_liked.remove(user)
         
     message.save()
-
-
-
