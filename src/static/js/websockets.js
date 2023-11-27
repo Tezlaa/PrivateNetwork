@@ -7,7 +7,11 @@ var onMessageFunc = {
 
 function startSocket() {
     var lobby_name = window.location.pathname.split('/chat/')[1].slice(0, -1);
-    socket = new WebSocket(url=`ws://${window.location.host}/ws/chat/${lobby_name}`, )
+    try {
+        socket = new WebSocket(url=`ws://${window.location.host}/ws/chat/${lobby_name}`, )
+    } catch (error) {
+        socket = new WebSocket(url=`wss://${window.location.host}/ws/chat/${lobby_name}`, )
+    }
 
     socket.onmessage = function(e) {
         console.log('onMessage');
