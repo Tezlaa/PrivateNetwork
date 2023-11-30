@@ -18,7 +18,8 @@ RUN apt-get update && apt-get install -y \
     openssh-client \
     flake8 \
     locales \
-    vim
+    vim \
+    wait-for-it
 
 # Install Python development packages
 RUN apt-get install -y \

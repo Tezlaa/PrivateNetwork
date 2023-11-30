@@ -230,7 +230,7 @@ function apiRequestDelete(request, data) {
 }
 
 function getBaseUrlLobbyAPI(){
-    return window.location.origin + '/lobby/api/v1/'
+    return window.location.origin + '/api/v1/lobby/'
 }
 
 function getCSRFToken() {
