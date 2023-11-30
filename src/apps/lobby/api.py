@@ -1,5 +1,4 @@
 from django.db.models import QuerySet
-from django.contrib.auth.models import User
 
 from rest_framework import status
 from rest_framework.response import Response
