@@ -1,3 +1,5 @@
+from typing import Optional
+
 import pytest
 
 from mixer.backend.django import Mixer
@@ -9,7 +11,7 @@ from config.testing.api import APIClient
 
 
 @pytest.fixture
-def user(mixer: Mixer) -> User:
+def user(mixer: Mixer) -> Optional[User]:
     return mixer.blend(User, username='TestUser')
 
 

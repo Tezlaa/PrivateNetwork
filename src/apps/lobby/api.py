@@ -21,7 +21,7 @@ class LobbyGenericAPIView(GenericAPIView):
 
     def serialize_instance_to_dict(self, instance: QuerySet[Lobby] | Lobby,
                                    many: bool = False) -> dict:
-        return LobbySerializer(instance=instance, many=many).data
+        return LobbySerializer(instance=instance, many=many).data  # type: ignore
 
     def get_queryset(self):
         return Lobby.objects.all()
