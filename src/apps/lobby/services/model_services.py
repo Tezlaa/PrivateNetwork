@@ -30,6 +30,12 @@ def add_user_to_lobby(user: User, lobby: Lobby) -> Lobby:
     return lobby
 
 
+@api_validation_error
+def add_user_to_lobby_as_owner(user: User, lobby: Lobby) -> Lobby:
+    lobby.owners.add(user)
+    return add_user_to_lobby(user=user, lobby=lobby)
+
+
 def remove_user_from_lobby(user: User, lobby: Lobby) -> None:
     user_exists_in_lobby = lobby.user_connected.filter(username=user.username).exists()
     user_owner = is_user_owner(user, lobby)
@@ -70,10 +76,9 @@ def get_lobby(lobby_name: str,
 
 
 @api_validation_error
-def create_lobby(valid_serializer, user) -> Lobby:
+def create_lobby_by_serializer(valid_serializer, user) -> Lobby:
     
     lobby = valid_serializer.save()
-    lobby.owners.add(user)
-    add_user_to_lobby(user=user, lobby=lobby)
+    add_user_to_lobby_as_owner(user=user, lobby=lobby)
     
     return lobby

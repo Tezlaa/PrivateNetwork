@@ -1,3 +1,4 @@
+from attr import s
 from django.db.models import QuerySet
 
 from rest_framework import status
@@ -10,7 +11,7 @@ from apps.lobby.serializers import (
     LobbySerializer, LobbyJoinSerializer, LobbySerializerOnlyNames
 )
 from apps.lobby.services.model_services import (
-    get_lobby, get_user_lobbies, add_user_to_lobby, create_lobby, remove_user_from_lobby,
+    get_lobby, get_user_lobbies, add_user_to_lobby, create_lobby_by_serializer, remove_user_from_lobby,
     delete_lobby,
 )
 
@@ -55,7 +56,10 @@ class CreateLobby(LobbyGenericAPIView):
         
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        lobby = create_lobby(valid_serializer=serializer, user=request.user)
+        lobby = create_lobby_by_serializer(
+            valid_serializer=serializer,
+            user=request.user
+        )
         
         return Response(self.serialize_instance_to_dict(lobby),
                         status=status.HTTP_201_CREATED)
