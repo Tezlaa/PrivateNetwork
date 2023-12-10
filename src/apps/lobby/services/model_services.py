@@ -25,8 +25,8 @@ def add_user_to_lobby(user: User, lobby: Lobby) -> Lobby:
     
     if user_limit < lobby.user_connected.count() + 1:
         raise UserLimitError(user_limit)
-    
     lobby.user_connected.add(user)
+    
     return lobby
 
 

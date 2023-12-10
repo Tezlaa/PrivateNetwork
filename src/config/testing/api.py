@@ -34,11 +34,11 @@ class APIClient(DRFAPIClient):
         response: Response = request_method(*args, **kwargs)
         
         content = self._decode(response)
-        assert response.status_code == expected_status_code
+        assert response.status_code == expected_status_code, content
         return content
     
     def _create_user(self, user: User):
-        self.user = user
+        self.user: User = user
         self.password = "".join([random.choice(string.hexdigits) for _ in range(6)])
         self.user.set_password(self.password)
         self.user.save()

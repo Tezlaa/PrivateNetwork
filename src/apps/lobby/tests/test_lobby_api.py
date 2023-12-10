@@ -1,9 +1,10 @@
+from unittest import result
 import pytest
 
 from config.testing.api import APIClient
 
 from apps.lobby.models import Lobby
-from apps.lobby.services.model_services import add_user_to_lobby_as_owner
+from apps.lobby.services.model_services import add_user_to_lobby_as_owner, get_lobby
 
 
 pytestmark = [pytest.mark.django_db]
@@ -36,7 +37,7 @@ def test_create_lobby(as_user: APIClient):
     }
     result = as_user.post('/api/v1/lobby/create/', post_data, format='json')
     
-    correct_json = {
+    expected_json = {
         'lobby_name': 'TestLobby1',
         'owners': [
             {'username': 'TestUser'}
@@ -47,7 +48,7 @@ def test_create_lobby(as_user: APIClient):
         ],
         'messages': []
     }
-    assert result == correct_json
+    assert result == expected_json
 
 
 def test_all_names_lobby(as_user: APIClient):
@@ -62,3 +63,31 @@ def test_all_names_lobby(as_user: APIClient):
 def test_delete_lobby(as_user: APIClient):
     as_user.delete('/api/v1/lobby/delete/TestLobby', expected_status_code=204)
     assert Lobby.objects.filter(user_connected=as_user.user).count() == 0
+
+
+def test_get_lobby(as_user: APIClient):
+    result = as_user.get('/api/v1/lobby/getLobby/TestLobby')
+    expected_json = {
+        'lobby_name': 'TestLobby',
+        'owners': [
+            {'username': 'TestUser'}
+        ],
+        'user_limit': 2,
+        'user_connected': [
+            {'username': 'TestUser'}
+        ],
+        'messages': []
+    }
+    assert result == expected_json
+
+
+def test_join_to_lobby(as_user: APIClient):
+    lobby = Lobby.objects.create(lobby_name='TestJoinLobby', password=1992)
+    as_user.post(
+        '/api/v1/lobby/action/TestJoinLobby',
+        {'password': 1992},
+        format='json',
+        expected_status_code=201
+    )
+    assert get_lobby(lobby_name='TestJoinLobby', password=1992, user=as_user.user) == lobby
+    

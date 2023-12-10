@@ -85,9 +85,12 @@ class ConnectDisconnectFromLobby(LobbyGenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
-        lobby = get_lobby(lobby_name=lobby_name, password=serializer.data.get('password'))
+        lobby = get_lobby(
+            lobby_name=lobby_name,
+            password=serializer.data.get('password'),
+        )
         add_user_to_lobby(user, lobby)
-        
+
         return Response(self.serialize_instance_to_dict(lobby),
                         status=status.HTTP_201_CREATED)
         

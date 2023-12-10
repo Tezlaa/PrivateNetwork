@@ -12,7 +12,7 @@ class LobbySerializer(serializers.ModelSerializer):
     owner = serializers.BooleanField(required=False, read_only=True)
     user_connected = UserSerializer(read_only=True, many=True)
     messages = MessageSerializer(many=True, read_only=True, source='chat')
-    
+
     class Meta:
         model = Lobby
         fields = ('lobby_name', 'password', 'owners', 'owner',

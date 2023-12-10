@@ -28,3 +28,12 @@ class Lobby(models.Model):
         if self.user_connected.count() >= self.user_limit:
             return False
         return True
+
+    def __str__(self) -> str:
+        return (
+            f'{self.lobby_name}\n'
+            f'Owners: {" ".join([user for user in self.owners.all()])}\n'
+            f'User limit: {self.user_limit}\n',
+            f'Connected: {" ".join([user for user in self.user_connected.all()])}\n'
+            f'{self.chat.all()}'
+        )
