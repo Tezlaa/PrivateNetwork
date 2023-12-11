@@ -1,10 +1,9 @@
-from attr import s
 from django.db.models import QuerySet
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
-from rest_framework.permissions import IsAuthenticated
+
 
 from apps.lobby.models import Lobby
 from apps.lobby.serializers import (
@@ -18,7 +17,7 @@ from apps.lobby.services.model_services import (
 
 class LobbyGenericAPIView(GenericAPIView):
     serializer_class = LobbySerializer
-    permission_classes = (IsAuthenticated, )
+    # permission_classes = (IsAuthenticated, )
 
     def serialize_instance_to_dict(self, instance: QuerySet[Lobby] | Lobby,
                                    many: bool = False) -> dict:

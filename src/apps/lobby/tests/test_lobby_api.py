@@ -1,5 +1,4 @@
 import pytest
-from apps.base.decorators import banchmark_test_queries
 
 from config.testing.api import APIClient
 

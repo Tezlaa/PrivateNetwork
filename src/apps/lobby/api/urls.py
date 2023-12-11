@@ -1,6 +1,6 @@
 from django.urls import path
 
-from apps.lobby.api import (
+from apps.lobby.api.views import (
     GetLobbies, CreateLobby, ConnectDisconnectFromLobby,
     GetLobbiesNames, DeleteLobby, GetLobby
 )

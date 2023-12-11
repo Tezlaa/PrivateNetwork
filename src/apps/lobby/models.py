@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 from apps.chat.models import Message
 
-from apps.base.validations import validate_password
+from apps.utils.validations import validate_password
 
 
 class Lobby(models.Model):

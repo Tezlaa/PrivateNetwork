@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 
 from apps.lobby.models import Lobby
 
-from apps.base.exceptions import OwnerError, UserLimitError, LobbyNotFound
-from apps.base.decorators import api_validation_error, banchmark_test_queries
+from apps.utils.exceptions import OwnerError, UserLimitError, LobbyNotFound
+from apps.utils.decorators import api_validation_error, banchmark_test_queries
 
 
 def is_user_owner(user: User, lobby: Lobby) -> bool:
