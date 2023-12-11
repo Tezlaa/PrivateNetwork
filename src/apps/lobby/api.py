@@ -41,7 +41,7 @@ class GetLobbies(LobbyGenericAPIView):
 class GetLobby(LobbyGenericAPIView):
     def get(self, request, lobby_name: str):
         """ Get lobby by his name """
-        lobby = get_lobby(lobby_name, user=request.user)
+        lobby = get_lobby(lobby_name=lobby_name, user=request.user)
         return Response(self.serialize_instance_to_dict(lobby),
                         status=status.HTTP_200_OK)
         

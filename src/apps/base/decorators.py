@@ -2,6 +2,7 @@ import time
 import functools
 
 from django.db import connection, reset_queries
+from django.test.utils import CaptureQueriesContext
 
 from rest_framework.exceptions import ValidationError
 
@@ -15,6 +16,15 @@ def api_validation_error(func):
     return wrapper
 
 
+def banchmark_test_queries(func):
+    
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        with CaptureQueriesContext(connection):
+            return banchmark_queries(func)(*args, **kwargs)
+    return wrapper
+
+
 def banchmark_queries(func):
     GREEN   = '\033[0;32m'
     YELLOW  = '\033[0;33m'
@@ -23,7 +33,7 @@ def banchmark_queries(func):
     @functools.wraps(func)
     def inner_func(*args, **kwargs):
         reset_queries()
-    
+           
         start_queries = len(connection.queries)
 
         start = time.perf_counter()
@@ -35,7 +45,7 @@ def banchmark_queries(func):
         
         if count_queries == 0:
             return result
-
+        
         print(GREEN, f'\nFunction : {func.__name__}')
         print(f'Number of Queries : {count_queries}')
         print(f'Finished in : {(end - start):.5f}s')

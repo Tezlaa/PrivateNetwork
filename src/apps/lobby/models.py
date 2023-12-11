@@ -31,9 +31,5 @@ class Lobby(models.Model):
 
     def __str__(self) -> str:
         return (
-            f'{self.lobby_name}\n'
-            f'Owners: {" ".join([user for user in self.owners.all()])}\n'
-            f'User limit: {self.user_limit}\n',
-            f'Connected: {" ".join([user for user in self.user_connected.all()])}\n'
-            f'{self.chat.all()}'
+            f'{self.lobby_name}'
         )

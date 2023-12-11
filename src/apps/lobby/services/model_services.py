@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from apps.lobby.models import Lobby
 
 from apps.base.exceptions import OwnerError, UserLimitError, LobbyNotFound
-from apps.base.decorators import api_validation_error, banchmark_queries
+from apps.base.decorators import api_validation_error, banchmark_test_queries
 
 
 def is_user_owner(user: User, lobby: Lobby) -> bool:
@@ -62,16 +62,22 @@ def get_lobby(lobby_name: str,
               user: Optional[User] = None) -> Lobby:
     
     filters = {'lobby_name': lobby_name}
+    
     if password is not None:
         filters['password'] = password  # type: ignore
     if user is not None:
         filters['user_connected__in'] = [user]  # type: ignore
-        
-    lobby = Lobby.objects.filter(**filters).first()
-        
+    
+    lobby_query = Lobby.objects.filter(**filters)
+    if user is not None:
+        lobby_query = lobby_query.annotate(
+            owner=Exists(User.objects.filter(pk=OuterRef('owners__pk'), username=user.username))
+        )
+    lobby = lobby_query.first()
+
     if lobby is None:
         raise LobbyNotFound(lobby_name)
-    
+        
     return lobby
 
 
