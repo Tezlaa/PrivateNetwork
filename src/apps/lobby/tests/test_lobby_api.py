@@ -4,8 +4,9 @@ from apps.base.decorators import banchmark_test_queries
 from config.testing.api import APIClient
 
 from apps.lobby.models import Lobby
-from apps.lobby.services.model_services import add_user_to_lobby_as_owner, get_lobby
-
+from apps.lobby.services.model_services import (
+    add_user_to_lobby_as_owner, get_lobby, add_user_to_lobby
+)
 
 pytestmark = [pytest.mark.django_db]
 
@@ -91,4 +92,19 @@ def test_join_to_lobby(as_user: APIClient):
         expected_status_code=201
     )
     assert get_lobby(lobby_name='TestJoinLobby', password=1992, user=as_user.user) == lobby
+
+    
+def test_disconnect_from_lobby(as_user: APIClient):
+    lobby = Lobby.objects.create(lobby_name='TestDisconnectLobby', password=1992)
+    add_user_to_lobby(as_user.user, lobby)
+    
+    assert lobby.user_connected.all()[0] == as_user.user
+    
+    as_user.delete(
+        '/api/v1/lobby/action/TestDisconnectLobby',
+        {'password': 1992},
+        format='json',
+        expected_status_code=204
+    )
+    assert lobby.user_connected.all().count() == 0
     
