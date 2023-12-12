@@ -5,7 +5,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status
 
-from apps.account.serializers import UserSerializer
+from apps.accounts.serializers import UserSerializer
 
 
 class UserRegister(GenericAPIView):

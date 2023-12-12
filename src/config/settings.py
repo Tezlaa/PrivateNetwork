@@ -69,7 +69,7 @@ INSTALLED_APPS = [
     # apps
     'apps.chat',
     'apps.lobby',
-    'apps.account',
+    'apps.accounts',
     'apps.a12n',
 ]
 

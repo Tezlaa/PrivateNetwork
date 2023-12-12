@@ -1,7 +1,7 @@
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
 
-from apps.account.views import SingUp
+from apps.accounts.views import SingUp
 
 
 urlpatterns = [

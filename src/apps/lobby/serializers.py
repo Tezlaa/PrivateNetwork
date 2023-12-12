@@ -4,7 +4,7 @@ from apps.chat.serializers import MessageSerializer
 
 from apps.lobby.models import Lobby
 
-from apps.account.serializers import UserSerializer
+from apps.accounts.serializers import UserSerializer
 
 
 class LobbySerializer(serializers.ModelSerializer):
