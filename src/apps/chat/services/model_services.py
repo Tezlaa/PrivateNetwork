@@ -1,8 +1,10 @@
-from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 
 from apps.chat.models import Message
+
 from apps.lobby.models import Lobby
+
+from apps.accounts.models import User
 
 
 def send_message(lobby: Lobby, message: str, username: str) -> Message:

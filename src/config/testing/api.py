@@ -4,7 +4,7 @@ import string
 
 from typing import Optional
 
-from django.contrib.auth.models import User
+from apps.accounts.models import User
 
 from rest_framework.test import APIClient as DRFAPIClient
 from rest_framework.response import Response

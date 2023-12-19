@@ -1,3 +1,7 @@
+# Back-end ignores
+media
+staticfiles
+
 # vscode
 .vscode
 

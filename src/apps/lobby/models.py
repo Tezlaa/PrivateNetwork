@@ -1,8 +1,9 @@
 from django.db import models
 from django.core.validators import MinValueValidator
-from django.contrib.auth.models import User
 
 from apps.chat.models import Message
+
+from apps.accounts.models import User
 
 from apps.utils.validations import validate_password
 

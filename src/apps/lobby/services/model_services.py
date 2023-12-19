@@ -1,12 +1,12 @@
 from typing import Optional
 
 from django.db.models import QuerySet, OuterRef, Exists
-from django.contrib.auth.models import User
-
 from apps.lobby.models import Lobby
 
 from apps.utils.exceptions import OwnerError, UserLimitError, LobbyNotFound
 from apps.utils.decorators import api_validation_error, banchmark_test_queries
+
+from apps.accounts.models import User
 
 
 def is_user_owner(user: User, lobby: Lobby) -> bool:
