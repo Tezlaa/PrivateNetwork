@@ -3,8 +3,9 @@
 
 
 {% block contentblock %}
+<div id="singUpErrors"></div>
 <div class="mx-auto p-2 text-center" style="width: 70%; ">
-    <form method="post">
+    <form method="post" id="singUpform">
         {% csrf_token %}
         <div class="mb-3">
             <label for="exampleInputEmail1" class="form-label">Username</label>
@@ -27,7 +28,8 @@
                 {{form.password2}}
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Sign up</button>
+        <button type="button" onclick="submitSingUp(event)" class="btn btn-primary">Sign up</button>
+        <input type="submit" style="display:none;">
     </form>
 </div>
 {% endblock contentblock %}
