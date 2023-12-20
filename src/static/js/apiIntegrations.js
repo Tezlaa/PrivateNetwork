@@ -12,12 +12,16 @@ function getCSRFToken() {
 	return cookieValue;
 }
 
-function apiRequest(request) {
-    return fetch(request, )
-        .then(response => response.json());
-}
+function apiRequest(request, data = {}) {
+    
+    if (!data.hasOwnProperty('headers')){
+        data['headers'] = {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken(),
+            'Authorization': getLocalAccessTokenString(),
+        }
+    }
 
-function apiRequestPost(request, data) {
     return fetch(request, data)
         .then(response => {
             return response.json()
@@ -25,13 +29,16 @@ function apiRequestPost(request, data) {
         });
 }
 
-function apiRequestDelete(request, data) {
-    return fetch(request, data)
-        .then(response => response.status);
+function getLocalAccessTokenString(){
+    return `Token ${localStorage.getItem('access')}`
 }
 
 function getBaseUrlLobbyAPI(){
     return getBaseUrlAPIV1() + 'lobby/'
+}
+
+function getBaseUrlAccountAPI() {
+    return getBaseUrlAPIV1() + 'account/'
 }
 
 function getBaseUrlAPIV1() {

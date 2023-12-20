@@ -1,8 +1,8 @@
 function getAllLobby() {
     const request = new Request(getBaseUrlLobbyAPI() + 'allNames/')
 
-    apiRequest(request).then(json => {
-        showLobbies(json)
+    apiRequest(request).then(response => {
+        showLobbies(response.json)
     })
 }
 
@@ -25,13 +25,9 @@ function joinLobby(){
     var data = {
         method: "POST",
         body: JSON.stringify(postData),
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCSRFToken(),
-        }
     }
 
-    apiRequestPost(request, data).then(response => {
+    apiRequest(request, data).then(response => {
         console.log(response);
         if (response.status != 201){
             alert_bootstrap(response.json, 'warning', 'global_alert')
@@ -57,13 +53,9 @@ function createLobby(){
     var data = {
         method: "POST",
         body: JSON.stringify(postData),
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCSRFToken(),
-        }
     }
 
-    apiRequestPost(request, data).then(response => {
+    apiRequest(request, data).then(response => {
         if (response.status != 201){
             json = response.json
             if (json.hasOwnProperty('password')) {
@@ -87,6 +79,7 @@ function loadMessagesFromAPI() {
     
     const request = new Request(getBaseUrlLobbyAPI() + 'getLobby/' + lobbyName)
     apiRequest(request).then(response => {
+        response = response.json
         response.messages.forEach(message => {
             createBubble(
                 message.user.username,
@@ -109,20 +102,25 @@ function scrollToLastMessage() {
 }
 
 
-function exitFromLobby(event) {
+function deleteOrExitFromLobby(event) {
     var lobbyName = event.target.id.split('exit-')[1];
-    const request = new Request(getBaseUrlLobbyAPI() + 'action/' + lobbyName);
+    var api = {
+        'Delete': 'delete',
+        'Exit': 'action'
+    }
+
+    const request = new Request(`${getBaseUrlLobbyAPI()}${api[event.target.textContent]}/${lobbyName}`);
 
     var data = {
         method: "DELETE",
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCSRFToken(),
-        }
     }
 
-    apiRequestDelete(request, data).then(status => {
-        document.location.reload();
+    apiRequest(request, data).then(response => {
+        if (response.status === 204){
+            document.location.reload();
+        } else {
+            console.log(response)
+        }
     })
 }
 
@@ -151,14 +149,14 @@ function showLobby(json_lobby){
     exitButton.className = "btn btn-outline-warning"
     exitButton.textContent = 'Exit'
     exitButton.id = 'exit-' + json_lobby['lobby_name']
-    exitButton.onclick = exitFromLobby
+    exitButton.onclick = deleteOrExitFromLobby
     exitButton.style = "--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin-right: 7px"
 
     deleteButton.title = "button"
     deleteButton.className = "btn btn-outline-danger"
     deleteButton.textContent = 'Delete'
     deleteButton.id = 'exit-' + json_lobby['lobby_name']
-    deleteButton.onclick = exitFromLobby
+    deleteButton.onclick = deleteOrExitFromLobby
     deleteButton.style = "--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin-right: 7px"
 
     if (json_lobby['owner']){

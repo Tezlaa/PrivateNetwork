@@ -40,11 +40,11 @@ def test_create_lobby(as_user: APIClient):
     expected_json = {
         'lobby_name': 'TestLobby1',
         'owners': [
-            {'username': 'TestUser'}
+            {'username': 'TestUser', 'avatar': None}
         ],
         'user_limit': 2,
         'user_connected': [
-            {'username': 'TestUser'}
+            {'username': 'TestUser', 'avatar': None}
         ],
         'messages': []
     }
@@ -70,12 +70,12 @@ def test_get_lobby(as_user: APIClient):
     expected_json = {
         'lobby_name': 'TestLobby',
         'owners': [
-            {'username': 'TestUser'}
+            {'username': 'TestUser', 'avatar': None}
         ],
         'owner': True,
         'user_limit': 2,
         'user_connected': [
-            {'username': 'TestUser'}
+            {'username': 'TestUser', 'avatar': None}
         ],
         'messages': []
     }

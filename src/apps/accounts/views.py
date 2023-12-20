@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
-from django.views.generic import FormView
+from django.views.generic import FormView, TemplateView
 
 
 class SingUp(FormView):
@@ -17,3 +17,7 @@ class SingUp(FormView):
         user = form.save()
         auth_login(self.request, user)
         return redirect(self.get_success_url())
+
+
+class Profile(TemplateView):
+    template_name = 'accounts/profile.html'

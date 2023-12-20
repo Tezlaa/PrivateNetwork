@@ -16,6 +16,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
 
 from django.core.asgi import get_asgi_application  # noqa: E402
+from django.contrib.staticfiles.handlers import ASGIStaticFilesHandler  # noqa: E402
+from django.conf import settings  # noqa: E402
 
 from channels.auth import AuthMiddlewareStack  # noqa: E402
 from channels.routing import ProtocolTypeRouter, URLRouter  # noqa: E402
@@ -23,9 +25,10 @@ from channels.security.websocket import AllowedHostsOriginValidator  # noqa: E40
 
 from apps.chat.routing import websocket_urlpatterns  # noqa: E402
 
+http_asgi = get_asgi_application() if not settings.DEBUG else ASGIStaticFilesHandler(get_asgi_application())
 application = ProtocolTypeRouter(
     {
-        'http': get_asgi_application(),
+        'http': http_asgi,
         'websocket': AllowedHostsOriginValidator(
             AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
         ),

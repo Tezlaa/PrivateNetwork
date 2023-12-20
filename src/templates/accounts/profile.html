@@ -1,0 +1,24 @@
+{% include 'base.html' %}
+{% load static %}
+
+{% block content %}
+<script src="{% static 'js/profile.js' %}"></script>
+
+<section id="profile" class="container">
+    <div class="row">
+        <div class="left_part col-6 col-md-4" style="background-color: bisque;">
+            <div class="avatar"></div>
+            <div class="username"></div>
+        </div>
+        <div class="right_part col-md-8">
+            <div class="settings">
+                
+            </div>
+        </div>
+    </div>
+</section>
+<script>getMe()</script>
+
+
+{% endblock content %}
+    

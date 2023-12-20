@@ -3,8 +3,9 @@
 
 
 {% block contentblock %}
+<script src="{% static 'js/login.js' %}"></script>
 <div class="mx-auto p-2 text-center" style="width: 70%; ">
-    <form method="post">
+    <form method="post" id="login-form">
         {% csrf_token %}
         {% if form.errors %}
             <p>Username or password not correct</p>
@@ -23,7 +24,8 @@
                 {{form.password}}
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Login</button>
+        <button type="button" onclick="submitLogin()" class="btn btn-primary">Login</button>
+        <button type="submit" class="btn btn-primary" style="display: none;">Login</button>
     </form>
 </div>
 {% endblock contentblock %}

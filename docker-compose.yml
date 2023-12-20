@@ -21,7 +21,6 @@ services:
       wait-for-it database:5432 --
       sh -c "python manage.py makemigrations &&
              python manage.py migrate &&
-             python manage.py collectstatic --noinput &&
              daphne -b 0.0.0.0 -p 8000 config.asgi:application"
     ports:
       - "8000:8000"

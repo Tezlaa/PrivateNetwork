@@ -22,7 +22,7 @@ if not settings.DEBUG:
         path('media/<path:path>',
              mediaserve, {'document_root': settings.MEDIA_ROOT}),
         path('static/<path:path>',
-             mediaserve, {'document_root': settings.STATIC_ROOT}),
+             mediaserve, {'document_root': settings.STATICFILES_DIRS}),
     ]
 else:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

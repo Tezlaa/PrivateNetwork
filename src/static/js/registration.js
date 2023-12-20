@@ -16,15 +16,11 @@ function submitSingUp(event){
     var data = {
         method: "POST",
         body: JSON.stringify(body),
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCSRFToken()
-        }
     }
 
-    var apiRegister = new Request(getBaseUrlAPIV1() + 'register/')
+    var apiRegister = new Request(getBaseUrlAccountAPI() + 'register/')
 
-    apiRequestPost(apiRegister, data).then( response => {
+    apiRequest(apiRegister, data).then( response => {
         if (response.status != 201) {
             json = response.json
             Object.keys(body).forEach(key => {
