@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import pytest
 
 
@@ -9,8 +10,10 @@ from apps.accounts.models import User
 pytestmark = [pytest.mark.django_db]
 
 
-ACCESS = ''
-REFRESH = ''
+@dataclass
+class Token:
+    access: str
+    refresh: str
 
 
 @pytest.fixture(autouse=True)
@@ -22,9 +25,14 @@ def user_jwt() -> User:
     yield
 
 
+@pytest.fixture(autouse=True)
+def tokens() -> Token:
+    token = Token('', '')
+    yield token
+
+
 def test_obtain_token(as_anon: APIClient):
-    global ACCESS, REFRESH
-    
+   
     data = {
         'username': 'TestUser1',
         'password': 'rootrootroot',
@@ -33,35 +41,33 @@ def test_obtain_token(as_anon: APIClient):
     
     assert result.get('access') is not None and result.get('refresh') is not None
     
-    ACCESS = result.get('access')
-    REFRESH = result.get('refresh')
+    tokens.access = result.get('access')
+    tokens.refresh = result.get('refresh')
 
 
 def test_refresh_token(as_anon: APIClient):
-    global ACCESS, REFRESH
     
     data = {
-        'refresh': REFRESH
+        'refresh': tokens.refresh
     }
+    
     result = as_anon.post('/api/v1/token/refresh/', data, expected_status_code=200)
-    assert result.get('access') != ACCESS
-    ACCESS = result.get('access')
+    assert result.get('access') != tokens.access
+    tokens.access = result.get('access')
 
 
 def test_status_api(as_anon: APIClient):
-    global ACCESS, REFRESH
     
     as_anon.credentials(
-        HTTP_AUTHORIZATION=f"Token {ACCESS}"
+        HTTP_AUTHORIZATION=f"Token {tokens.access}"
     )
     as_anon.get('/api/v1/token/status/', expected_status_code=200)
 
 
 def test_logout_token(as_anon: APIClient):
-    global REFRESH
-    
+
     data = {
-        'refresh': REFRESH
+        'refresh': tokens.refresh
     }
     as_anon.post('/api/v1/token/logout/', data, expected_status_code=200)
     as_anon.get('/api/v1/token/status/', expected_status_code=401)
