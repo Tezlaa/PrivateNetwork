@@ -1,3 +1,16 @@
+
+function isAuth() {
+    apiRequest(
+        new Request(`${getBaseUrlAPIV1()}token/status/`)
+    ).then(response => {
+        if (response.status === 200){
+            return true
+        }
+        return false
+    })
+}
+
+
 function getAllLobby() {
     const request = new Request(getBaseUrlLobbyAPI() + 'allNames/')
 

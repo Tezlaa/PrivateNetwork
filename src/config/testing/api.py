@@ -14,7 +14,7 @@ class APIClient(DRFAPIClient):
     def __init__(self, user: Optional[User] = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        if user:
+        if user is not None:
             self._create_user(user)
             super().force_authenticate(user=self.user)
     

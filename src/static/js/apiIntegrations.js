@@ -24,9 +24,31 @@ function apiRequest(request, data = {}) {
 
     return fetch(request, data)
         .then(response => {
+            if (response.status === 401){
+                refreshToken()
+            }
             return response.json()
-                .then(json => ({ json, status: response.status, response }));
+                .then(json => ({ json, status: response.status, response}));
         });
+}
+
+function refreshToken() {
+    var data = {
+        'method': 'POST',
+        'body': JSON.stringify({
+            'refresh': localStorage.getItem('refresh'),
+        })
+    }
+
+    var request = new Request(`${getBaseUrlAPIV1()}token/refresh/`)
+    apiRequest(request, data).then(response => {
+        if (response.status === 200) {
+            localStorage.setItem('access', response.json['access'])
+        } else {
+            document.location.href = getLoginUrl()
+        }
+        console.log(response.json)
+    })
 }
 
 function getLocalAccessTokenString(){
