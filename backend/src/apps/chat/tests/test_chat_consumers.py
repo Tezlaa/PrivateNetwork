@@ -10,6 +10,7 @@ from mixer.backend.django import Mixer
 
 from apps.chat.routing import websocket_urlpatterns
 from apps.chat.services.model_services import like_for_message, send_message
+from apps.chat.tests.utils import tp_to_unaccurate
 from apps.lobby.models import Lobby
 from apps.lobby.services.model_services import (
     add_user_to_lobby_as_owner, add_user_to_lobby
@@ -69,12 +70,6 @@ async def test_connection(communicator_chat):
 
 async def test_send_and_receive_message(connected_communicator: WebsocketCommunicator):
     communicator = await connected_communicator
-    
-    def tp_to_unaccurate(json: dict) -> dict:
-        """ timestamp to unaccurate format """
-
-        json['timestamp'] = str(json['timestamp'])[:9]
-        return json
     
     await communicator.send_json_to({
         'type': 'message',
@@ -146,5 +141,3 @@ async def test_delete_like(connected_communicator: WebsocketCommunicator, lobby:
     assert response == expected_message
     
     assert await database_sync_to_async(message.user_liked.count)() == 0
-    
-    

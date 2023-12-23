@@ -4,9 +4,6 @@ from typing import Any
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 
-from asgiref.sync import sync_to_async
-
-from apps.lobby.services.model_services import get_lobby
 from apps.chat.services.utils import receive_json_to_needed_fields
 
 
