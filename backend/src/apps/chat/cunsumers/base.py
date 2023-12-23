@@ -1,3 +1,4 @@
+from abc import abstractmethod
 import json
 from typing import Any
 
@@ -19,17 +20,35 @@ class ConsumerBase(AsyncWebsocketConsumer):
             will be required and each request to the websocket class will check it their are available
     
     Methods:
-        `ConsumerBase.sendint_to_group`
+        `ConsumerBase.sendint_to_group()`
+        `ConsumerBase.preconnect()`
     
     Usage requirements:
-        1. Create mathod with the name: receive_{incomming request type}(self, fields: dict[str, Any])
+    
+        1. Create preconnect method that will return group name. Here you can save needed atributes for you
+            Example:
+                async def preconnect(self) -> str:
+                    self.value1 = self.score['url_route]['kwargs']['name']
+                    self.value2 = ...
+                    return self.value1
+        
+        2. Create mathod with the name: receive_{incomming request type}(self, fields: dict[str, Any])
             Example:
                 # message it`s incomming request type.
                 async def receive_message(self, fields: dict[str, Any]):
                     # your business logic.
                     
-                    # send_to_group(...) can be found: `ConsumerBase.sendint_to_group`.
+                    # send_to_group(...) can be found: ConsumerBase.sendint_to_group().
         
+        3. Create method for sending by group. Must be the same name that you send in ConsumerBase.sendint_to_group().
+            Example:
+                async def chat_like(self, event):
+                    await self.send(
+                        text_data=json.dumps({
+                            'type': event.get('type'),
+                            ...
+                        })
+                    )
     """
     
     available_receive_fields = ()
@@ -57,17 +76,19 @@ class ConsumerBase(AsyncWebsocketConsumer):
             group_name, sending_data
         )
     
+    @abstractmethod
+    async def preconnect(self) -> str:
+        """ Pre-connect method. A group name must be returned """
+    
     async def connect(self):
-        self.lobby_name: str = self.scope['url_route']['kwargs'].get('lobby_name', '')
-        self.lobby_group_name = f'lobby_{self.lobby_name.replace(" ", "_")}'
-        self.lobby = await sync_to_async(get_lobby)(lobby_name=self.lobby_name)
+        self.group_name = await self.preconnect()
         
-        await self.channel_layer.group_add(self.lobby_group_name, self.channel_name)  # type: ignore
+        await self.channel_layer.group_add(self.group_name, self.channel_name)  # type: ignore
         
         await self.accept()
     
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.lobby_group_name, self.channel_name)  # type: ignore
+        await self.channel_layer.group_discard(self.group_name, self.channel_name)  # type: ignore
     
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
