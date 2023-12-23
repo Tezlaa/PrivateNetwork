@@ -5,16 +5,18 @@ import pytest
 from mixer.backend.django import Mixer
 from mixer.backend.django import mixer as _mixer
 
-from django.contrib.auth import get_user_model
-
 from apps.accounts.models import User
 
 from config.testing.api import APIClient
 
 
+def create_user_by_username(mixer: Mixer, username: str) -> Optional[User]:
+    return mixer.blend('accounts.User', username=username)
+
+
 @pytest.fixture
 def user(mixer: Mixer) -> Optional[User]:
-    return mixer.blend('accounts.User', username='TestUser')
+    return create_user_by_username(mixer, 'TestUser')
 
 
 @pytest.fixture
