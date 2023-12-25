@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     'apps.lobby',
     'apps.accounts',
     'apps.a12n',
+    'apps.contact',
 ]
 
 MIDDLEWARE = [

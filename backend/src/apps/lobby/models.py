@@ -26,9 +26,7 @@ class Lobby(models.Model):
         verbose_name_plural = 'Lobby'
         
     def is_limit(self) -> bool:
-        if self.user_connected.count() >= self.user_limit:
-            return False
-        return True
+        return self.user_connected.count() < self.user_limit
 
     def __str__(self) -> str:
         return (

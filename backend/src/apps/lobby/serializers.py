@@ -16,7 +16,7 @@ class LobbySerializer(serializers.ModelSerializer):
     class Meta:
         model = Lobby
         fields = ('lobby_name', 'password', 'owners', 'owner',
-                  'user_limit', 'user_connected', 'messages')
+                  'user_limit', 'user_connected', 'messages',)
         extra_kwargs = {
             'password': {'write_only': True},
         }
