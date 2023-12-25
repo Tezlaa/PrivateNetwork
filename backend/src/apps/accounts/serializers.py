@@ -12,3 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
             'password': {'write_only': True},
             'avatar': {'read_only': True}
         }
+
+
+class UserSerializerByUsername(serializers.Serializer):
+    username = serializers.CharField()
