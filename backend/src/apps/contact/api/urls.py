@@ -1,8 +1,8 @@
 from django.urls import path
 
-from apps.contact.api.views import CreateContact
+from apps.contact.api.views import RetrieveAndListContact
 
 
 urlpatterns = [
-    path('', CreateContact.as_view())
+    path('', RetrieveAndListContact.as_view())
 ]

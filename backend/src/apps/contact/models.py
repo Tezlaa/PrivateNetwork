@@ -13,4 +13,4 @@ class Contact(models.Model):
         verbose_name_plural = 'Contacts'
         
     def __str__(self) -> str:
-        return f'{self.connect.all()[1].username}'
+        return ', '.join(user.username for user in self.connect.all())
