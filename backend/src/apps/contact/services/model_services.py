@@ -11,7 +11,7 @@ def create_contact_by_users(request_user: User, user: User) -> Contact:
     if contact.count() < 2:
         contact = Contact.objects.create()
         contact.connect.add(user, request_user)
-    
+        contact.save()
     return contact
 
 
@@ -21,3 +21,7 @@ def get_contact_by_user(user: User) -> QuerySet[Contact]:
             Contact.objects.filter(pk=OuterRef('id')).values('connect__username')
         )
     )
+    
+
+def get_contact_instance_by_his_id(contact_id: int) -> Contact:
+    return Contact.objects.get(id=contact_id)

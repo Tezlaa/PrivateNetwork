@@ -49,6 +49,7 @@ def test_get_contact_and_create_services(as_user: APIClient, create_third_user, 
     
     expected_json = [
         {
+            'id': 1,
             'connect': [
                 {'username': 'TestSecondUser'}, {'username': 'TestUser'}
             ],
@@ -56,6 +57,7 @@ def test_get_contact_and_create_services(as_user: APIClient, create_third_user, 
             'connect_user': 'TestSecondUser'
         },
         {
+            'id': 2,
             'connect': [
                 {'username': 'TestThirdUser'}, {'username': 'TestUser'}
             ],
@@ -74,8 +76,8 @@ def test_create_contact(as_user: APIClient):
             {'username': 'TestSecondUser'},
             {'username': 'TestUser'},
         ],
+        'id': 1,
         'messages': []
     }
     assert result == expected_json
     assert Contact.objects.count() == 1
-

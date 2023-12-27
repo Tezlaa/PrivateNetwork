@@ -12,4 +12,4 @@ class ContactSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Contact
-        fields = ('connect', 'messages', 'connect_user')
+        fields = ('id', 'connect', 'messages', 'connect_user')
