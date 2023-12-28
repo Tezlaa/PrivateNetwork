@@ -24,6 +24,9 @@ class APIClient(DRFAPIClient):
     def post(self, *args, expected_status_code=201, **kwargs) -> dict:
         return self._request('post', expected_status_code, *args, **kwargs)
     
+    def patch(self, *args, expected_status_code=200, **kwargs) -> dict:
+        return self._request('patch', expected_status_code, *args, **kwargs)
+    
     def delete(self, *args, expected_status_code=200, **kwargs) -> dict:
         return self._request('delete', expected_status_code, *args, **kwargs)
     
@@ -39,6 +42,7 @@ class APIClient(DRFAPIClient):
     
     def _create_user(self, user: User):
         self.user: User = user
+        self.username = user.username
         self.password = "".join([random.choice(string.hexdigits) for _ in range(6)])
         self.user.set_password(self.password)
         self.user.save()

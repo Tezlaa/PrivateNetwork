@@ -1,10 +1,10 @@
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, UpdateAPIView
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status
 
-from apps.accounts.serializers import UserSerializer
+from apps.accounts.serializers import UserSerializer, FullUserSerializer
 from apps.accounts.models import User
 
 
@@ -36,3 +36,10 @@ class ObtainUserInfo(GenericAPIView):
 
     def get_queryset(self):
         return User.objects.all()
+    
+
+class UpdateUserInfo(UpdateAPIView):
+    serializer_class = FullUserSerializer
+    
+    def get_object(self):
+        return self.request.user

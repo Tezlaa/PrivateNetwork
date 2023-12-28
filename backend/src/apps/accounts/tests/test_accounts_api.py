@@ -1,9 +1,13 @@
+import os
+import time
+
 import pytest
 
-
-from config.testing.api import APIClient
+from django.conf import settings
 
 from apps.accounts.models import User
+
+from config.testing.api import APIClient
 
 
 pytestmark = [pytest.mark.django_db]
@@ -30,4 +34,25 @@ def test_obtaining_info_about_user(as_user: APIClient):
         'avatar': None,
     }
     assert result == expected_json
+
+
+def test_download_avatart(as_user: APIClient):
+    file_name = 'test_img.png'
+    test_pictures_path = 'apps/accounts/tests/files/{}'.format(file_name)
     
+    data = {
+        'avatar': (file_name, open(test_pictures_path, 'rb'))
+    }
+    
+    result = as_user.patch(
+        '/api/v1/account/update/',
+        data=data,
+    )
+
+    assert result.get('avatar') is not None, "Avatar update failed"
+    result['avatar'] = result['avatar'].split('/media/avatars/')[1]
+    assert result == {
+        'username': as_user.username,
+        'avatar': f'{as_user.username}/{file_name}'
+    }
+    os.remove(os.path.join(settings.MEDIA_ROOT, f'avatars\\{as_user.username}\\{file_name}'))

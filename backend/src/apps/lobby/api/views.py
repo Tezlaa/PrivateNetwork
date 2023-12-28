@@ -17,7 +17,6 @@ from apps.lobby.services.model_services import (
 
 class LobbyGenericAPIView(GenericAPIView):
     serializer_class = LobbySerializer
-    # permission_classes = (IsAuthenticated, )
 
     def serialize_instance_to_dict(self, instance: QuerySet[Lobby] | Lobby,
                                    many: bool = False) -> dict:

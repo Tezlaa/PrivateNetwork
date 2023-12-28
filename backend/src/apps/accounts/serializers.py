@@ -14,5 +14,12 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
 
+class FullUserSerializer(UserSerializer):
+    class Meta(UserSerializer.Meta):
+        extra_kwargs = {
+            'password': {'write_only': True},
+        }
+
+
 class UserSerializerByUsername(serializers.Serializer):
     username = serializers.CharField()
