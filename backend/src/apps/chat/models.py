@@ -1,11 +1,23 @@
 from django.db import models
+from django.core.validators import FileExtensionValidator
+from django.conf import settings
 
 from apps.accounts.models import User
+from apps.chat.services.utils import get_path_for_voice_message
 
 
 class Message(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    message = models.TextField(verbose_name='Message', max_length=500)
+    message = models.TextField(verbose_name='Message', max_length=500, null=True, blank=True)
+    voice_record = models.FileField(
+        upload_to=get_path_for_voice_message,
+        validators=[
+            FileExtensionValidator(settings.AVAILABLE_AUDIO_FORMATS)
+        ],
+        null=True, blank=True,
+    )
+    reply_message = models.ForeignKey(to='self', on_delete=models.SET_NULL, null=True,
+                                      blank=True, related_name='reply')
     user_liked = models.ManyToManyField(to=User, blank=True, related_name='liked')
     created_at = models.DateTimeField(verbose_name='created at', auto_now_add=True)
     

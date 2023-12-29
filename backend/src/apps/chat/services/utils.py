@@ -1,3 +1,4 @@
+
 def receive_json_to_needed_fields(receive_json: dict, search_fields: tuple) -> dict:
     fields = {}
     for needed_field in search_fields:
@@ -7,3 +8,7 @@ def receive_json_to_needed_fields(receive_json: dict, search_fields: tuple) -> d
         fields[needed_field] = data_from_recive
         
     return fields
+
+
+def get_path_for_voice_message(obj, filename: str) -> str:
+    return f'voice_messages/{obj.user.username}/{filename}'
