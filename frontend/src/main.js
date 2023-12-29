@@ -17,7 +17,7 @@ const routes = [
   { path: '/logout', name: 'Logout', component: Home },
   { path: '/signup', name: 'Signup', component: Home },
   { path: '/networks', name: 'Networks', component: Networks },
-  { path: '/network', name: 'Network', component: Home } // TODO: change to /network/:id or something that
+  { path: '/network', name: 'Network', component: Home }
 ]
 
 const router = createRouter({
