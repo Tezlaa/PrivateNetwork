@@ -8,8 +8,12 @@ from apps.lobby.models import Lobby
 from apps.accounts.models import User
 
 
-def send_message(lobby: Lobby | Contact, message: str, username: str) -> Message:
+def send_message_by_username(lobby: Lobby | Contact, message: str, username: str) -> Message:
     user = get_object_or_404(User, username=username)
+    return send_message(lobby, message, user)
+
+
+def send_message(lobby: Lobby | Contact, message: str, user: User):
     message_inctance = Message.objects.create(
         user=user,
         message=message
@@ -19,7 +23,7 @@ def send_message(lobby: Lobby | Contact, message: str, username: str) -> Message
     lobby.save()
     
     return message_inctance
-
+    
 
 def like_for_message(lobby: Lobby | Contact, message_pk: int, username: str, create: bool = True) -> None:
     user = get_object_or_404(User, username=username)

@@ -1,13 +1,26 @@
+from datetime import datetime
+
 import pytest
+
+from django.conf import settings
+
+from pytz import timezone
 
 from config.testing.api import APIClient
 
+from apps.chat.services.model_services import send_message
 from apps.lobby.models import Lobby
 from apps.lobby.services.model_services import (
     add_user_to_lobby_as_owner, get_lobby, add_user_to_lobby
 )
 
-pytestmark = [pytest.mark.django_db]
+
+FREEZE_TIME = '2023-01-01 15:00:00+00:00'
+
+pytestmark = [
+    pytest.mark.django_db,
+    pytest.mark.freeze_time(FREEZE_TIME)
+]
 
 
 @pytest.fixture(autouse=True)
@@ -107,3 +120,38 @@ def test_disconnect_from_lobby(as_user: APIClient):
     )
     assert lobby.user_connected.all().count() == 0
     
+
+def test_lobby_with_messages(as_user: APIClient, user_with_lobby: Lobby):
+    def delete_millisecond(isoformat: str) -> str:
+        return isoformat.split('.')[0]
+    send_message(user_with_lobby, 'Test message', as_user.user)
+    result = as_user.get('/api/v1/lobby/getLobby/TestLobby')
+    
+    result['messages'][0]['created_at'] = delete_millisecond(result['messages'][0]['created_at'])
+    
+    expected_json = {
+        'lobby_name': 'TestLobby',
+        'owners': [
+            {'username': 'TestUser', 'avatar': None}
+        ],
+        'owner': True,
+        'user_limit': 2,
+        'user_connected': [
+            {'username': 'TestUser', 'avatar': None}
+        ],
+        'messages': [
+            {
+                'created_at': delete_millisecond(datetime.now(tz=timezone(settings.TIME_ZONE)).isoformat()),
+                'files': [],
+                'id': 1,
+                'message': 'Test message',
+                'reply_message': None,
+                'user': {'avatar': None,
+                         'username': 'TestUser'},
+                'user_liked': [],
+                'voice_record': None
+            }
+        ],
+    }
+    
+    assert result == expected_json

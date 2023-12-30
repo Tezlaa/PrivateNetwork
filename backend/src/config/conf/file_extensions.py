@@ -12,5 +12,17 @@ AVAILABLE_AUDIO_FORMATS = [
 
 
 AVAILABLE_FILE_FORMATS = [
-    
+    ".txt",  # Text file
+    ".csv",  # Comma-separated values file
+    ".json",  # JSON file
+    ".xml",  # XML file
+    ".pdf",  # PDF file
+    ".docx",  # Microsoft Word document
+    ".xlsx",  # Microsoft Excel spreadsheet
+    ".jpg",  # JPEG image file
+    ".png",  # PNG image file
+    ".gif",  # GIF image file
+    ".bmp",  # BMP image file
+    ".tiff",  # TIFF image file
+    ".raw",  # RAW image file
 ]

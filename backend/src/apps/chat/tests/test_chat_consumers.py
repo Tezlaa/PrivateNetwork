@@ -9,7 +9,7 @@ from channels.db import database_sync_to_async
 
 
 from apps.chat.tests.utils import tp_to_unaccurate
-from apps.chat.services.model_services import send_message, like_for_message
+from apps.chat.services.model_services import send_message_by_username, like_for_message
 from apps.chat.routing import websocket_urlpatterns
 from apps.contact.models import Contact
 from apps.lobby.models import Lobby
@@ -94,7 +94,7 @@ async def test_send_and_receive_like(connected_communicator: WebsocketCommunicat
     communicator = await connected_communicator
     await communicator.connect()
     
-    message = await database_sync_to_async(send_message)(instance_lobby, 'Hello world', 'TestUser')
+    message = await database_sync_to_async(send_message_by_username)(instance_lobby, 'Hello world', 'TestUser')
     
     await communicator.send_json_to({
         'type': 'like',
@@ -127,7 +127,7 @@ async def test_delete_like(connected_communicator: WebsocketCommunicator, instan
     communicator = await connected_communicator
     await communicator.connect()
     
-    message = await database_sync_to_async(send_message)(instance_lobby, 'Hello world', 'TestUser')
+    message = await database_sync_to_async(send_message_by_username)(instance_lobby, 'Hello world', 'TestUser')
     await database_sync_to_async(like_for_message)(instance_lobby, message.pk, 'TestUser')
     
     await communicator.send_json_to({

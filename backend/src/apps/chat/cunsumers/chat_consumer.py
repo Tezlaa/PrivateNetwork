@@ -2,7 +2,7 @@ import json
 from typing import Any
 from asgiref.sync import sync_to_async
 
-from apps.chat.services.model_services import like_for_message, send_message
+from apps.chat.services.model_services import like_for_message, send_message_by_username
 from apps.chat.cunsumers.base import ConsumerBase
 from apps.lobby.services.model_services import get_lobby
 from apps.contact.services.model_services import get_contact_instance_by_his_id
@@ -18,7 +18,7 @@ class ChatConsumerLobby(ConsumerBase):
         return f'lobby_{self.lobby_indentical.replace(" ", "_")}'
     
     async def receive_message(self, fields: dict[str, Any]) -> None:
-        new_message = await sync_to_async(send_message)(self.lobby, fields['message'], fields['username'])
+        new_message = await sync_to_async(send_message_by_username)(self.lobby, fields['message'], fields['username'])
 
         await self.sendint_to_group(group_name=self.group_name,
                                     event_method_name='chat_message',

@@ -14,7 +14,7 @@ class RecursiveField(serializers.Serializer):
 class MessageSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     user_liked = UserSerializer(many=True)
-    reply = RecursiveField(many=True)
+    reply_message = RecursiveField(many=True)
     
     class Meta:
         model = Message
