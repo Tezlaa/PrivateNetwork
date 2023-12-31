@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-import pytest
 
+import pytest
 
 from config.testing.api import APIClient
 

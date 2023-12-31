@@ -7,34 +7,42 @@ from channels.testing import WebsocketCommunicator
 from channels.routing import URLRouter
 from channels.db import database_sync_to_async
 
-
-from apps.chat.tests.utils import tp_to_unaccurate
+from apps.chat.permission.authentication import WSJWTAuthentication
+from apps.chat.tests.utils import tp_to_unaccurate, get_access_token
 from apps.chat.services.model_services import send_message_by_username, like_for_message
 from apps.chat.routing import websocket_urlpatterns
 from apps.contact.models import Contact
 from apps.lobby.models import Lobby
+from config.testing.api import APIClient
 
 
 pytestmark = [
     pytest.mark.django_db(transaction=True),
     pytest.mark.asyncio,
-    pytest.mark.freeze_time("2023-01-01 15:00:00+00:00")
+    pytest.mark.freeze_time('2023-01-01 15:00:00+00:00')
 ]
 
 
 @pytest.fixture
-async def communicator_chat_lobby() -> WebsocketCommunicator:
+async def communicator_chat_lobby(as_user: APIClient) -> WebsocketCommunicator:
     return WebsocketCommunicator(
         application=URLRouter(websocket_urlpatterns),
         path='ws/chat/lobby/TestLobby',
+        headers={
+            WSJWTAuthentication.AUTH_HEADER_NAME_WEBSOCKET: get_access_token(as_user.user),
+        }
     )
 
 
 @pytest.fixture
-async def communicator_chat_contact(contact: Contact) -> WebsocketCommunicator:
+async def communicator_chat_contact(as_user: APIClient,
+                                    contact: Contact) -> WebsocketCommunicator:
     return WebsocketCommunicator(
         application=URLRouter(websocket_urlpatterns),
         path=f'ws/chat/contact/{contact.id}',
+        headers={
+            WSJWTAuthentication.AUTH_HEADER_NAME_WEBSOCKET: get_access_token(as_user.user),
+        }
     )
 
 

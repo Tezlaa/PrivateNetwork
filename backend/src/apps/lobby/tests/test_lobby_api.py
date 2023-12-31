@@ -8,6 +8,7 @@ from pytz import timezone
 
 from config.testing.api import APIClient
 
+from apps.chat.tests.utils import isoformat_to_unaccurate
 from apps.chat.services.model_services import send_message
 from apps.lobby.models import Lobby
 from apps.lobby.services.model_services import (
@@ -121,13 +122,9 @@ def test_disconnect_from_lobby(as_user: APIClient):
     assert lobby.user_connected.all().count() == 0
     
 
-def test_lobby_with_messages(as_user: APIClient, user_with_lobby: Lobby):
-    def delete_millisecond(isoformat: str) -> str:
-        return isoformat.split('.')[0]
+def test_lobby_with_messages(as_user: APIClient, user_with_lobby: Lobby):   
     send_message(user_with_lobby, 'Test message', as_user.user)
     result = as_user.get('/api/v1/lobby/getLobby/TestLobby')
-    
-    result['messages'][0]['created_at'] = delete_millisecond(result['messages'][0]['created_at'])
     
     expected_json = {
         'lobby_name': 'TestLobby',
@@ -141,7 +138,7 @@ def test_lobby_with_messages(as_user: APIClient, user_with_lobby: Lobby):
         ],
         'messages': [
             {
-                'created_at': delete_millisecond(datetime.now(tz=timezone(settings.TIME_ZONE)).isoformat()),
+                'created_at': datetime.now(tz=timezone(settings.TIME_ZONE)).isoformat(),
                 'files': [],
                 'id': 1,
                 'message': 'Test message',
@@ -153,5 +150,8 @@ def test_lobby_with_messages(as_user: APIClient, user_with_lobby: Lobby):
             }
         ],
     }
+    
+    expected_json['messages'][0] = isoformat_to_unaccurate(expected_json['messages'][0])
+    result['messages'][0] = isoformat_to_unaccurate(result['messages'][0])
     
     assert result == expected_json

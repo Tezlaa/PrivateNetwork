@@ -8,8 +8,9 @@ from channels.routing import URLRouter
 from channels.db import database_sync_to_async
 
 from apps.chat.models import Message
+from apps.chat.permission.authentication import WSJWTAuthentication
 from apps.chat.routing import websocket_urlpatterns
-from apps.chat.tests.utils import tp_to_unaccurate
+from apps.chat.tests.utils import tp_to_unaccurate, get_access_token
 from apps.contact.models import Contact
 from apps.lobby.models import Lobby
 from apps.lobby.services.model_services import add_user_to_lobby_as_owner
@@ -44,38 +45,52 @@ def lobbies(as_user: APIClient) -> Iterator[list[Lobby]]:
 
 
 @pytest.fixture
-async def chat_communicator() -> WebsocketCommunicator:
+async def chat_communicator(as_user: APIClient) -> WebsocketCommunicator:
     return WebsocketCommunicator(
         application=URLRouter(websocket_urlpatterns),
         path='ws/chat/lobby/Lobby1',
+        headers={
+            WSJWTAuthentication.AUTH_HEADER_NAME_WEBSOCKET: get_access_token(as_user.user),
+        }
     )
 
 
 @pytest.fixture
-async def chat_communicator_2() -> WebsocketCommunicator:
+async def chat_communicator_2(as_user: APIClient) -> WebsocketCommunicator:
     return WebsocketCommunicator(
         application=URLRouter(websocket_urlpatterns),
         path='ws/chat/lobby/Lobby2',
+        headers={
+            WSJWTAuthentication.AUTH_HEADER_NAME_WEBSOCKET: get_access_token(as_user.user),
+        }
     )
 
 
 @pytest.fixture
-async def contact_communicator(contact: Contact) -> WebsocketCommunicator:
+async def contact_communicator(as_user: APIClient, contact: Contact) -> WebsocketCommunicator:
     return WebsocketCommunicator(
         application=URLRouter(websocket_urlpatterns),
         path=f'ws/chat/contact/{contact.id}',
+        headers={
+            WSJWTAuthentication.AUTH_HEADER_NAME_WEBSOCKET: get_access_token(as_user.user),
+        }
     )
 
 
 @pytest.fixture
-async def notify_communicator(lobbies: Iterator[list[Lobby]], contact: Contact) -> WebsocketCommunicator:
+async def notify_communicator(as_user: APIClient,
+                              lobbies: Iterator[list[Lobby]],
+                              contact: Contact) -> WebsocketCommunicator:
     lobbies = [lobby.lobby_name for lobby in lobbies]
     lobbies.append(contact.id)  # added contact lobby
     
     return WebsocketCommunicator(
         application=URLRouter(websocket_urlpatterns),
         path='ws/notify/',
-        headers=lobbies,
+        headers={
+            WSJWTAuthentication.AUTH_HEADER_NAME_WEBSOCKET: get_access_token(as_user.user),
+            'lobbies': lobbies,
+        },
     )
 
 

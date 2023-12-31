@@ -1,9 +1,14 @@
 from abc import abstractmethod
+
 import json
+
 from typing import Any
+
+from asgiref.sync import sync_to_async
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+from apps.chat.permission.authentication import WSJWTAuthentication
 from apps.chat.services.utils import receive_json_to_needed_fields
 
 
@@ -47,7 +52,8 @@ class ConsumerBase(AsyncWebsocketConsumer):
                         })
                     )
     """
-    
+
+    permission_class = WSJWTAuthentication
     available_receive_fields = ()
        
     async def sendint_to_group(self, group_name: str, event_method_name: str, sending_data: dict[str, Any]):
@@ -79,10 +85,15 @@ class ConsumerBase(AsyncWebsocketConsumer):
     
     async def connect(self):
         self.group_name = await self.preconnect()
+        await self.authorization()
         
         await self.channel_layer.group_add(self.group_name, self.channel_name)  # type: ignore
         
         await self.accept()
+    
+    async def authorization(self) -> None:
+        self.permission_class = self.permission_class()
+        self.user, self._token = await sync_to_async(self.permission_class.authenticate)(self.scope)
     
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)  # type: ignore

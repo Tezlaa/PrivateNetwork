@@ -4,6 +4,8 @@ import pytest
 
 from mixer.backend.django import Mixer
 
+from rest_framework_simplejwt.tokens import AccessToken
+
 from apps.accounts.models import User
 from apps.contact.services.model_services import create_contact_by_users
 from apps.contact.models import Contact
@@ -20,6 +22,10 @@ pytestmark = [pytest.mark.django_db]
 
 def create_user_by_username(mixer: Mixer, username: str) -> Optional[User]:
     return mixer.blend('accounts.User', username=username)
+
+
+def get_access_token(user: User) -> str:
+    return str(AccessToken.for_user(user))
 
 
 @pytest.fixture(autouse=True)

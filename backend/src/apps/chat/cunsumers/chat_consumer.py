@@ -9,7 +9,7 @@ from apps.contact.services.model_services import get_contact_instance_by_his_id
 
 
 class ChatConsumerLobby(ConsumerBase):
-    available_receive_fields = ('type', 'message', 'username', 'message_id')
+    available_receive_fields = ('type', 'message', 'username', 'message_id', 'reply', 'files')
     
     async def preconnect(self) -> str:
         self.lobby_indentical: str = self.scope['url_route']['kwargs'].get('lobby_name', '')

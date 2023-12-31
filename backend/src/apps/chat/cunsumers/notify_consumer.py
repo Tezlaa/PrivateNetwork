@@ -5,7 +5,7 @@ from apps.chat.cunsumers.chat_consumer import ChatConsumerLobby
 class NotifyConsumer(ChatConsumerLobby):
     
     async def preconnect(self) -> str:
-        self.lobbies = self.scope['headers']
+        self.lobbies = self.scope['headers']['lobbies']
         self.group_names = []
         return ''
     
