@@ -18,4 +18,4 @@ def get_path_for_voice_message(obj, filename: str) -> str:
 
 
 def get_path_for_file_message(obj, filename: str) -> str:
-    return f'files/{datetime.now().strftime("%m/%d/%Y")}/{filename}'
+    return f'files/{datetime.now().strftime("%m.%d.%Y")}/{filename}'

@@ -1,7 +1,10 @@
+import io
+
 from typing import Optional
 
-from django.core.files import File
+from django.core.files.base import ContentFile
 from django.db import transaction
+from django.db.models import FileField
 
 from apps.chat.models import Message, FileMessage
 from apps.chat.services.schemas import FileMessageType, MessageSendType, ReplyMessage
@@ -14,13 +17,15 @@ class LobbyAction:
         self.lobby = lobby
 
     @transaction.atomic
-    def send_message(self, message: MessageSendType) -> Message: 
+    def send_message(self, message: MessageSendType) -> Message:
         message_instance = Message.objects.create(
             user=message.user,
             message=message.text
         )
         
-        message_instance.voice_record = self.get_file(message.voice_record)
+        voice = message.voice_record
+        if voice is not None:
+            message_instance.voice_record.save(voice.file_name, ContentFile(voice.file))
         
         for file in self.create_files(message.files):
             message_instance.files.add(file)
@@ -39,25 +44,20 @@ class LobbyAction:
             return
         
         return Message.objects.get(id=reply.id)
-        
+    
     def create_files(self, files: list[FileMessageType]) -> Optional[list[FileMessage]]:
         if files is None:
             return
         
-        return FileMessage.objects.bulk_create([
-            FileMessage(
-                sign=file.sign,
-                file=self.get_file(file)
-            ) for file in files
-        ])
+        return [self.get_file_instance(file) for file in files]
 
-    def get_file(self, file: FileMessage) -> Optional[File]:
+    def get_file_instance(self, file: FileMessage) -> Optional[FileMessage]:
         if file is None:
             return
         
-        return File(file.file, name=file.file_name)
-
+        file_instance = FileMessage(sign=file.sign)
+        file_instance.file.save(file.file_name, ContentFile(file.file))
+        return file_instance
     
-class AsyncMessage(Message):
-    async def send_message(message: MessageSendType):
-        pass
+    def get_madia_path(self, message: FileField):
+        return str(message.file).split('\\media\\')[1].replace('\\', '/')

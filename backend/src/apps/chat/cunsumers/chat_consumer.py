@@ -29,7 +29,7 @@ class ChatConsumerLobby(ConsumerBase):
                                     })
 
     async def receive_delete_like(self, fields: dict[str, Any]) -> None:
-        await sync_to_async(like_for_message)(self.lobby, fields['message_id'], self.user, False)
+        await sync_to_async(like_for_message)(self.lobby, fields['message_id'], self.user.username, False)
         
         await self.sendint_to_group(group_name=self.group_name,
                                     event_method_name='chat_delete_like',
@@ -38,7 +38,7 @@ class ChatConsumerLobby(ConsumerBase):
                                     })
     
     async def receive_like(self, fields: dict[str, Any]) -> None:
-        await sync_to_async(like_for_message)(self.lobby, fields['message_id'], self.user)
+        await sync_to_async(like_for_message)(self.lobby, fields['message_id'], self.user.username)
         
         await self.sendint_to_group(group_name=self.group_name,
                                     event_method_name='chat_like',

@@ -21,8 +21,12 @@ pytestmark = [
 
 
 def test_shemas_message_sending_and_receive(as_user: APIClient):
-    bytearray_voice = bytearray(open('apps/chat/tests/files/test_sound.mp3', 'rb').read())
-    bytearray_file = bytearray(open('apps/chat/tests/files/test_image.png', 'rb').read())
+    with open('apps/chat/tests/files/test_sound.mp3', 'rb') as f:
+        bytearray_voice = f.read()
+    
+    with open('apps/chat/tests/files/test_image.png', 'rb') as f:
+        bytearray_file = f.read()
+    
     timestamp = str(time())
     
     voice = FileMessageType(
