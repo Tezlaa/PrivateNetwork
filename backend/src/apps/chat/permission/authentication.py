@@ -2,7 +2,6 @@ from typing import Any, Optional
 
 from rest_framework_simplejwt.tokens import Token
 from rest_framework_simplejwt.authentication import JWTAuthentication, AuthUser
-from rest_framework_simplejwt.settings import api_settings
 
 from apps.chat.permission.exceptions import HeadersIsEmpty, TokenNotBeFound
 

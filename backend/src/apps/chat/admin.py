@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.chat.models import File, Message
+from apps.chat.models import FileMessage, Message
 
 
 @admin.register(Message)
@@ -12,7 +12,7 @@ class MessageAdminView(admin.ModelAdmin):
     user_liked_display.short_description = 'Likes'
     
 
-@admin.register(File)
+@admin.register(FileMessage)
 class FileAdminView(admin.ModelAdmin):
     list_display = ('id', 'sign', 'file')
     list_editable = ('sign', )

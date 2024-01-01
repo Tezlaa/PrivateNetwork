@@ -20,7 +20,7 @@ class Message(models.Model):
     )
     reply_message = models.ForeignKey(to='self', on_delete=models.SET_NULL, null=True,
                                       blank=True, related_name='reply')
-    files = models.ManyToManyField(to='File', blank=True)
+    files = models.ManyToManyField(to='FileMessage', blank=True)
     user_liked = models.ManyToManyField(to=User, blank=True, related_name='liked')
     created_at = models.DateTimeField(verbose_name='created at', auto_now_add=True)
     
@@ -28,7 +28,7 @@ class Message(models.Model):
         return f'{self.user.username}: {self.message[:5]}...'
     
 
-class File(models.Model):
+class FileMessage(models.Model):
     sign = models.CharField(max_length=100, null=True, blank=True, default=None)
     file = models.FileField(
         upload_to=get_path_for_file_message,

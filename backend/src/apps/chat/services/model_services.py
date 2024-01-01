@@ -1,5 +1,3 @@
-from typing import Any
-
 from django.shortcuts import get_object_or_404
 
 from apps.chat.models import Message
@@ -8,11 +6,6 @@ from apps.contact.models import Contact
 from apps.lobby.models import Lobby
 
 from apps.accounts.models import User
-
-
-# class MessageSending:
-#     def send_message(lobby: Lobby | Contact, serializer=)
-        
 
 
 def send_message_by_username(lobby: Lobby | Contact, message: str, username: str) -> Message:

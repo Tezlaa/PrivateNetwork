@@ -116,7 +116,6 @@ async def test_receive_message(notify_communicator: WebsocketCommunicator,
     await chat_communicator.send_json_to({
         'type': 'message',
         'message': 'Hello world_1',
-        'username': 'TestUser',
     })
 
     await contact_communicator.send_json_to({

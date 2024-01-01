@@ -11,6 +11,7 @@ class NotifyConsumer(ChatConsumerLobby):
     
     async def connect(self):
         await self.preconnect()
+        await self.authorization()
         
         for lobby in self.lobbies:
             self.group_names.append(f'lobby_{lobby}')

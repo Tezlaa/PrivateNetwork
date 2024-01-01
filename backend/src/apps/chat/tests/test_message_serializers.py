@@ -25,7 +25,6 @@ pytestmark = [
 
 def test_message_serializer(as_user: APIClient, lobby: Lobby):
     created_message = send_message(lobby, 'Test Message', as_user.user)
-    serialize_data = MessageSerializer(instance=created_message).data
     expected_json = {
         'id': 1,
         'user': OrderedDict([('username', 'TestUser'), ('avatar', None)]),
@@ -36,6 +35,7 @@ def test_message_serializer(as_user: APIClient, lobby: Lobby):
         'created_at': datetime.now(tz=timezone(settings.TIME_ZONE)).isoformat(),
         'files': [],
     }
+    serialize_data = MessageSerializer(instance=created_message).data
     assert (
         isoformat_to_unaccurate(serialize_data) == isoformat_to_unaccurate(expected_json)
     )

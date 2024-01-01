@@ -30,7 +30,7 @@ async def communicator_chat_lobby(as_user: APIClient) -> WebsocketCommunicator:
         path='ws/chat/lobby/TestLobby',
         headers={
             WSJWTAuthentication.AUTH_HEADER_NAME_WEBSOCKET: get_access_token(as_user.user),
-        }
+        },
     )
 
 
@@ -42,13 +42,15 @@ async def communicator_chat_contact(as_user: APIClient,
         path=f'ws/chat/contact/{contact.id}',
         headers={
             WSJWTAuthentication.AUTH_HEADER_NAME_WEBSOCKET: get_access_token(as_user.user),
-        }
+        },
     )
 
 
 @pytest.mark.parametrize(
-    'communicator', (lazy_fixture('communicator_chat_lobby'),
-                     lazy_fixture('communicator_chat_contact'))
+    'communicator', (
+        lazy_fixture('communicator_chat_lobby'),
+        lazy_fixture('communicator_chat_contact')
+    )
 )
 async def test_connection(communicator: WebsocketCommunicator):
     communicator = await communicator
@@ -70,7 +72,6 @@ async def test_send_and_receive_message(connected_communicator: WebsocketCommuni
     await communicator.send_json_to({
         'type': 'message',
         'message': 'Hello world',
-        'username': 'TestUser',
     })
 
     expected_message = {
@@ -107,7 +108,6 @@ async def test_send_and_receive_like(connected_communicator: WebsocketCommunicat
     await communicator.send_json_to({
         'type': 'like',
         'message': 'Hello world',
-        'username': 'TestUser',
         'message_id': message.pk
     })
     
@@ -141,7 +141,6 @@ async def test_delete_like(connected_communicator: WebsocketCommunicator, instan
     await communicator.send_json_to({
         'type': 'delete_like',
         'message': 'Hello world',
-        'username': 'TestUser',
         'message_id': message.pk
     })
     
