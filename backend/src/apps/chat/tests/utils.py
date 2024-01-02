@@ -12,7 +12,7 @@ def tp_to_unaccurate(json: dict) -> dict:
 
 def isoformat_to_unaccurate(json: dict) -> dict:
     if json.get('created_at', False):
-        json['created_at'] = json['created_at'].split('.')[0]
+        json['created_at'] = json['created_at'].split('.')[0][:-3]
         
     return json
 

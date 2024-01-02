@@ -1,4 +1,5 @@
 import os
+from re import A
 import time
 import shutil
 
@@ -24,13 +25,7 @@ pytestmark = [
 ]
 
 
-def test_send_message_class(as_user: APIClient, lobby: Lobby):
-    with open('apps/chat/tests/files/test_sound.mp3', 'rb') as f:
-        bytearray_voice = f.read()
-    
-    with open('apps/chat/tests/files/test_image.png', 'rb') as f:
-        bytearray_file = f.read()
-    
+def test_send_message_class(as_user: APIClient, lobby: Lobby, bytearray_voice, bytearray_file):   
     voice = FileMessageType(
         file=bytearray_voice,
         file_name='test_sound.mp3'
@@ -64,9 +59,46 @@ def test_send_message_class(as_user: APIClient, lobby: Lobby):
             message_instance, file.file_name
         ) == file_path
     )
+    
+    assert Message.objects.count() == 1
 
     message_instance.files.first().file.delete()
     message_instance.voice_record.delete()
+
+
+def test_typed_json(as_user: APIClient, lobby: Lobby, bytearray_voice, bytearray_file):
+    action = LobbyAction(lobby)
+    test_data_send = {
+        'user': as_user.user,
+        'text': 'Test Message',
+        'voice_record': {'file': bytearray_voice, 'file_name': 'test_sound.mp3'},
+        'reply_message': {'id': 1},
+        'files': [{'file': bytearray_file, 'file_name': 'test_image.png'}]
+    }
+    
+    expected_typed_message = {
+        'user': as_user.user,
+        'text': 'Test Message',
+        'voice_record': FileMessageType(file=bytearray_voice, file_name='test_sound.mp3'),
+        'reply_message': ReplyMessage(1),
+        'files': [
+            FileMessageType(file=bytearray_file, file_name='test_image.png'),
+        ]
+    }
+    
+    assert action.typed_json(test_data_send) == MessageSendType(**expected_typed_message)
+    
+    expected_typed_message.pop('reply_message')
+    test_data_send.pop('reply_message')
+    assert action.typed_json(test_data_send) == MessageSendType(**expected_typed_message)
+    
+    expected_typed_message.pop('files')
+    test_data_send.pop('files')
+    assert action.typed_json(test_data_send) == MessageSendType(**expected_typed_message)
+
+    expected_typed_message.pop('voice_record')
+    test_data_send.pop('voice_record')
+    assert action.typed_json(test_data_send) == MessageSendType(**expected_typed_message)
 
 
 def test_sending_by_username(as_user: APIClient, lobby: Lobby):

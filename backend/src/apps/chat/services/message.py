@@ -39,6 +39,22 @@ class LobbyAction:
         
         return message_instance
 
+    def typed_json(self, json: dict) -> MessageSendType:
+        reply_message = json.get('reply_message')
+        files = json.get('files')
+        voice_record = json.get('voice_record')
+        
+        if reply_message:
+            json['reply_message'] = ReplyMessage(**reply_message)
+        
+        if (files and (isinstance(files, list)) and not
+                (all(isinstance(file, FileMessageType) for file in files))):
+            json['files'] = [FileMessageType(**file_dict) for file_dict in files]
+        
+        if voice_record and not isinstance(voice_record, FileMessageType):
+            json['voice_record'] = FileMessageType(**voice_record)
+        return MessageSendType(**json)
+
     def get_reply_message(self, reply: ReplyMessage) -> Optional[Message]:
         if reply is None:
             return
