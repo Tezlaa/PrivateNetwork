@@ -101,7 +101,7 @@ class ConsumerBase(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         fields = receive_json_to_needed_fields(text_data_json, self.available_receive_fields)
-        receive_type = fields.get('type')
+        receive_type = fields.pop('type')
         
         if receive_type is not None:
             await self._search_needed_recieve_method(method=receive_type, fields=fields)

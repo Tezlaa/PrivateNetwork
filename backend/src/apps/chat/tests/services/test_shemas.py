@@ -1,6 +1,5 @@
 from dataclasses import asdict
 
-import base64
 from time import time
 
 
@@ -9,9 +8,9 @@ import pytest
 
 from config.testing.api import APIClient
 
-from apps.chat.services.schemas import (
-    MessageReceiveType, MessageSendType,
-    ReplyMessage, FileMessageType
+from apps.chat.services.action_services.schemas import (
+    FileUrl, MessageSendResponce, MessageSendRequest,
+    ReplyMessage, FileMessageType, UserAsUsername
 )
 
 
@@ -47,17 +46,18 @@ def test_shemas_message_sending_and_receive(as_user: APIClient):
         'files': [file]
     }
     
-    test_data_receive = {
-        'user': as_user.user,
+    test_sending_data = {
+        'user': UserAsUsername(username='TestUser'),
         'text': 'Test Message',
-        'voice_record': voice,
+        'message_id': 1,
+        'voice_record': FileUrl(url='test_url/url.mp3'),
         'reply_message': ReplyMessage(1),
-        'files': [file],
+        'files': [FileUrl(url='test_url/url.png')],
         'timestamp': timestamp,
     }
 
-    message_send = MessageSendType(**test_data_send)
-    message_receive = MessageReceiveType(**test_data_receive)
+    message_send = MessageSendRequest(**test_data_send)
+    message_sending = MessageSendResponce(**test_sending_data)
 
     expected_json_send = {
         'user': as_user.user,
@@ -75,10 +75,20 @@ def test_shemas_message_sending_and_receive(as_user: APIClient):
         }]
     }
     
-    expected_json_receive = {
-        **expected_json_send,
-        'timestamp': timestamp
+    expected_json_sending = {
+        'user': {'username': 'TestUser'},
+        'text': 'Test Message',
+        'message_id': 1,
+        'voice_record': {
+            'url': 'test_url/url.mp3',
+        },
+        'reply_message': {'id': 1},
+        'files': [{
+            'url': 'test_url/url.png',
+        }],
+        'timestamp': timestamp,
     }
     
     assert expected_json_send == asdict(message_send)
-    assert expected_json_receive == asdict(message_receive)
+    assert expected_json_sending == asdict(message_sending)
+    

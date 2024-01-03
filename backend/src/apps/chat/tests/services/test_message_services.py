@@ -1,21 +1,17 @@
-import os
-from re import A
-import time
-import shutil
+from datetime import datetime
 
 import pytest
 
 from apps.lobby.models import Lobby
 from apps.chat.services.model_services import send_message, send_message_by_username
-from apps.chat.services.message import LobbyAction
+from apps.chat.services.action_services.lobby_action import LobbyAction
 from apps.chat.services.utils import get_path_for_file_message, get_path_for_voice_message
 from apps.chat.models import Message
-from apps.chat.services.schemas import (
-    MessageReceiveType, MessageSendType,
-    ReplyMessage, FileMessageType
+from apps.chat.tests.utils import delete_temp_files_from_message_instance
+from apps.chat.services.action_services.schemas import (
+    MessageLikeRequest, MessageSendResponce, MessageSendRequest,
+    ReplyMessage, FileMessageType, FileUrl, UserAsUsername
 )
-
-
 from config.testing.api import APIClient
 
 
@@ -42,38 +38,38 @@ def test_send_message_class(as_user: APIClient, lobby: Lobby, bytearray_voice, b
         'files': [file]
     }
     
-    message = MessageSendType(**test_data_send)
+    message = MessageSendRequest(**test_data_send)
     
     action = LobbyAction(lobby)
-    message_instance = action.send_message(message)
-    assert (
-        get_path_for_voice_message(
-            message_instance, voice.file_name
-        ) == action.get_madia_path(message_instance.voice_record)
-    )
+    sending_message = action.send_message(message)
 
-    file_path = message_instance.files.first().file
-    
-    assert (
-        get_path_for_file_message(
-            message_instance, file.file_name
-        ) == file_path
+    expected_dataclass = MessageSendResponce(
+        user=UserAsUsername(username='TestUser'),
+        text='Test Message',
+        message_id=1,
+        voice_record=FileUrl(url='/media/voice_messages/TestUser/test_sound.mp3'),
+        reply_message=ReplyMessage(id=1),
+        files=[
+            FileUrl(url=f'/media/files/{datetime.now().strftime("%m.%d.%Y")}/test_image.png')
+        ],
+        timestamp=int(round(Message.objects.first().created_at.timestamp()))
     )
+    
+    assert sending_message == expected_dataclass
     
     assert Message.objects.count() == 1
 
-    message_instance.files.first().file.delete()
-    message_instance.voice_record.delete()
+    delete_temp_files_from_message_instance()
 
 
-def test_typed_json(as_user: APIClient, lobby: Lobby, bytearray_voice, bytearray_file):
+def test_decode_json(as_user: APIClient, lobby: Lobby, bytearray_voice, bytearray_file):
     action = LobbyAction(lobby)
     test_data_send = {
         'user': as_user.user,
         'text': 'Test Message',
-        'voice_record': {'file': bytearray_voice, 'file_name': 'test_sound.mp3'},
+        'voice_record': action.encode_to_base64_utf8(FileMessageType(file=bytearray_voice, file_name='test_sound.mp3')),
         'reply_message': {'id': 1},
-        'files': [{'file': bytearray_file, 'file_name': 'test_image.png'}]
+        'files': [action.encode_to_base64_utf8(FileMessageType(file=bytearray_file, file_name='test_image.png'))]
     }
     
     expected_typed_message = {
@@ -86,19 +82,43 @@ def test_typed_json(as_user: APIClient, lobby: Lobby, bytearray_voice, bytearray
         ]
     }
     
-    assert action.typed_json(test_data_send) == MessageSendType(**expected_typed_message)
+    assert action.decode_json(test_data_send, MessageSendRequest) == MessageSendRequest(**expected_typed_message)
     
     expected_typed_message.pop('reply_message')
     test_data_send.pop('reply_message')
-    assert action.typed_json(test_data_send) == MessageSendType(**expected_typed_message)
+    assert action.decode_json(test_data_send, MessageSendRequest) == MessageSendRequest(**expected_typed_message)
     
     expected_typed_message.pop('files')
     test_data_send.pop('files')
-    assert action.typed_json(test_data_send) == MessageSendType(**expected_typed_message)
+    assert action.decode_json(test_data_send, MessageSendRequest) == MessageSendRequest(**expected_typed_message)
 
     expected_typed_message.pop('voice_record')
     test_data_send.pop('voice_record')
-    assert action.typed_json(test_data_send) == MessageSendType(**expected_typed_message)
+    assert action.decode_json(test_data_send, MessageSendRequest) == MessageSendRequest(**expected_typed_message)
+
+
+def test_like_service(as_user: APIClient, lobby: Lobby):
+    action = LobbyAction(lobby)
+    message = action.send_message(MessageSendRequest(user=as_user.user, text='Test Message'))
+    action.like_message(
+        MessageLikeRequest(
+            user=as_user.user,
+            message_id=message.message_id,
+            status=True
+        )
+    )
+    assert Message.objects.get(id=message.message_id).user_liked.all().count() == 1
+    assert Message.objects.get(id=message.message_id, user_liked__in=[as_user.user])
+    
+    action.like_message(
+        MessageLikeRequest(
+            user=as_user.user,
+            message_id=message.message_id,
+            status=False
+        )
+    )
+
+    assert Message.objects.get(id=message.message_id).user_liked.all().count() == 0
 
 
 def test_sending_by_username(as_user: APIClient, lobby: Lobby):

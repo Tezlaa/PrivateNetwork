@@ -1,3 +1,5 @@
+
+from apps.chat.models import Message
 from apps.accounts.models import User
 
 from rest_framework_simplejwt.tokens import AccessToken
@@ -19,3 +21,9 @@ def isoformat_to_unaccurate(json: dict) -> dict:
 
 def get_access_token(user: User) -> str:
     return str(AccessToken.for_user(user))
+
+
+def delete_temp_files_from_message_instance() -> None:
+    Message.objects.first().files.first().file.delete()
+    Message.objects.first().voice_record.delete()
+    Message.objects.first().delete()
