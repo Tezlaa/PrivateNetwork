@@ -147,34 +147,35 @@ async def test_send_and_receive_like(connected_communicator: WebsocketCommunicat
     await communicator.disconnect()
 
 
-# @pytest.mark.parametrize(
-#     'connected_communicator, instance_lobby', [
-#         (lazy_fixture('communicator_chat_lobby'), lazy_fixture('lobby')),
-#         (lazy_fixture('communicator_chat_contact'), lazy_fixture('contact'))
-#     ]
-# )
-# async def test_delete_like(connected_communicator: WebsocketCommunicator, instance_lobby: Lobby | Contact):
-#     communicator = await connected_communicator
-#     await communicator.connect()
+@pytest.mark.parametrize(
+    'connected_communicator, instance_lobby', [
+        (lazy_fixture('communicator_chat_lobby'), lazy_fixture('lobby')),
+        (lazy_fixture('communicator_chat_contact'), lazy_fixture('contact'))
+    ]
+)
+async def test_delete_like(connected_communicator: WebsocketCommunicator, instance_lobby: Lobby | Contact):
+    communicator = await connected_communicator
+    await communicator.connect()
     
-#     message = await database_sync_to_async(send_message_by_username)(instance_lobby, 'Hello world', 'TestUser')
-#     await database_sync_to_async(like_for_message)(instance_lobby, message.pk, 'TestUser')
+    message = await database_sync_to_async(send_message_by_username)(instance_lobby, 'Hello world', 'TestUser')
+    await database_sync_to_async(like_for_message)(instance_lobby, message.pk, 'TestUser')
     
-#     await communicator.send_json_to({
-#         'type': 'delete_like',
-#         'message': 'Hello world',
-#         'message_id': message.pk
-#     })
+    await communicator.send_json_to({
+        'type': 'like',
+        'message_id': message.pk,
+        'status': False
+    })
     
-#     expected_message = {
-#         'type': 'chat_delete_like',
-#         'message_id': message.pk,
-#         'username': 'TestUser',
-#     }
-#     response = await communicator.receive_json_from()
+    expected_message = {
+        'type': 'chat_like',
+        'message_id': message.pk,
+        'user': {'username': 'TestUser'},
+        'status': False,
+    }
+    response = await communicator.receive_json_from()
     
-#     assert response == expected_message
+    assert response == expected_message
     
-#     assert await database_sync_to_async(message.user_liked.count)() == 0
-
-#     await communicator.disconnect()
+    assert await database_sync_to_async(message.user_liked.count)() == 0
+    
+    await communicator.disconnect()

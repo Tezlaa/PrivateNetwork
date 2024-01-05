@@ -115,13 +115,12 @@ async def test_receive_message(notify_communicator: WebsocketCommunicator,
 
     await chat_communicator.send_json_to({
         'type': 'message',
-        'message': 'Hello world_1',
+        'text': 'Hello world_1',
     })
 
     await contact_communicator.send_json_to({
         'type': 'message',
-        'message': 'Hello world_2',
-        'username': 'TestUser',
+        'text': 'Hello world_2',
     })
 
     receivers = [
@@ -137,13 +136,18 @@ async def test_receive_message(notify_communicator: WebsocketCommunicator,
     messages_ids: list[Message] = await database_sync_to_async(lambda messages: [m.id for m in messages])(messages)
     
     for i, json in enumerate(receivers):
-        expected_jsons.append({
-            'type': 'chat_message',
-            'message': f'Hello world_{number_sequence[i]}',
-            'username': 'TestUser',
-            'message_id': messages_ids[i],
-            'timestamp': str(int(time()))[:8],
-        })
+        expected_jsons.append(
+            {
+                'type': 'chat_message',
+                'user': {'username': 'TestUser'},
+                'message_id': messages_ids[i],
+                'text': f'Hello world_{number_sequence[i]}',
+                'voice_record': None,
+                'reply_message': None,
+                'files': [],
+                'timestamp': str(int(time()))[:8]
+            }
+        )
         responses.append(
             tp_to_unaccurate(json)
         )

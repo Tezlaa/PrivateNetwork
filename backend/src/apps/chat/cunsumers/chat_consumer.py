@@ -4,7 +4,6 @@ from typing import Any
 from asgiref.sync import sync_to_async
 from apps.chat.services.action_services.lobby_action import AsyncLobbyAction
 
-from apps.chat.services.model_services import like_for_message, send_message, send_message_by_username
 from apps.chat.cunsumers.base import ConsumerBase
 from apps.chat.services.action_services.schemas import MessageLikeRequest, MessageSendResponce, MessageSendRequest
 from apps.lobby.services.model_services import get_lobby
@@ -36,18 +35,19 @@ class ChatConsumerLobby(ConsumerBase):
                                     })
 
     async def receive_delete_like(self, fields: dict[str, Any]) -> None:
-        await sync_to_async(like_for_message)(self.lobby, fields['message_id'], self.user.username, False)
+        fields['user'] = self.user
+        message_type = self.action.decode_json(fields, MessageSendRequest)
+        message = await self.action.send_message(message_type)
         
         await self.sendint_to_group(group_name=self.group_name,
                                     event_method_name='chat_delete_like',
                                     sending_data={
-                                        **fields,
+                                        **asdict(message),
                                     })
     
     async def receive_like(self, fields: dict[str, Any]) -> None:
         fields['user'] = self.user
         message_type = self.action.decode_json(fields, MessageLikeRequest)
-        print(message_type)
         message = await self.action.like_message(message_type)
         
         await self.sendint_to_group(group_name=self.group_name,
