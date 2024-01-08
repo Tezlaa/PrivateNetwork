@@ -4,7 +4,6 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 
-
 from apps.lobby.models import Lobby
 from apps.lobby.serializers import (
     LobbySerializer, LobbyJoinSerializer, LobbySerializerOnlyNames

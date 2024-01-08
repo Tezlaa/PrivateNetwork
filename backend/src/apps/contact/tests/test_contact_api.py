@@ -1,4 +1,5 @@
 from typing import Iterable
+
 import pytest
 
 from mixer.backend.django import Mixer

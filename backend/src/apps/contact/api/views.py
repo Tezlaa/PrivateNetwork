@@ -1,7 +1,4 @@
-import json
-
 from rest_framework.generics import GenericAPIView
-from rest_framework.mixins import ListModelMixin
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,7 +6,6 @@ from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 
 from apps.accounts.models import User
-from apps.contact.models import Contact
 from apps.contact.serializers import ContactSerializer
 from apps.accounts.serializers import UserSerializerByUsername
 from apps.contact.services.model_services import create_contact_by_users, get_contact_by_user

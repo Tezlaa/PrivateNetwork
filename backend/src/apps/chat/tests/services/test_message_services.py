@@ -5,7 +5,6 @@ import pytest
 from apps.lobby.models import Lobby
 from apps.chat.services.model_services import send_message, send_message_by_username
 from apps.chat.services.action_services.lobby_action import LobbyAction
-from apps.chat.services.utils import get_path_for_file_message, get_path_for_voice_message
 from apps.chat.models import Message
 from apps.chat.tests.utils import delete_temp_files_from_message_instance
 from apps.chat.services.action_services.schemas import (

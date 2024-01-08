@@ -5,7 +5,7 @@ from asgiref.sync import sync_to_async
 from apps.chat.services.action_services.lobby_action import AsyncLobbyAction
 
 from apps.chat.cunsumers.base import ConsumerBase
-from apps.chat.services.action_services.schemas import MessageLikeRequest, MessageSendResponce, MessageSendRequest
+from apps.chat.services.action_services.schemas import MessageLikeRequest, MessageSendRequest
 from apps.lobby.services.model_services import get_lobby
 from apps.contact.services.model_services import get_contact_instance_by_his_id
 

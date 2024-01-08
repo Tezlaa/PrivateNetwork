@@ -2,8 +2,6 @@ import base64
 
 from datetime import datetime
 
-from time import time
-
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
@@ -13,10 +11,8 @@ from channels.db import database_sync_to_async
 
 from apps.chat.models import Message
 from apps.chat.permission.authentication import WSJWTAuthentication
-from apps.chat.services.action_services.lobby_action import AsyncLobbyAction
-from apps.chat.services.action_services.schemas import MessageSendRequest
 from apps.chat.tests.utils import (
-    tp_to_unaccurate, get_access_token, delete_temp_files_from_message_instance
+    get_access_token, delete_temp_files_from_message_instance
 )
 from apps.chat.services.model_services import (
     send_message_by_username, like_for_message,
